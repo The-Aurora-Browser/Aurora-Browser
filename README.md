@@ -1,8 +1,14 @@
-# Aurora Browser
+<p align="center">
+  <img alt="Aurora Browser" src="https://shieldcn.dev/header/gradient.svg?title=Aurora+Browser&subtitle=A+custom+open-source+web+browser+built+on+the+Ladybird+LibWeb+engine.&mode=dark&image=https%3A%2F%2Fi.ibb.co%2FtjLpHmP%2Fjay-bhadreshwara-zw-Il-z0-QRz-Y-unsplash.jpg&overlay=0.85" />
+</p>
 
-A custom open-source web browser built on the **[Ladybird](https://ladybird.org) LibWeb engine**.
+<p align="center">
+    <a href="https://github.com//Draftiermovie66/Aurora-Browser/actions/workflows/release.yml">
+        <img src="https://shieldcn.dev/badge/Build-Passing-success.svg?logo=githubactions" alt="Build">
+    </a>
+</p>
 
-**No Chromium. No Firefox. Custom engine.**
+---
 
 ## Architecture
 
@@ -25,6 +31,7 @@ Aurora Browser
 ├── LICENSE                   # MIT
 └── README.md
 ```
+---
 
 ## Building from Source
 
@@ -51,6 +58,7 @@ VERSION=3.0.0 bash engine/build.sh
 # Windows (inside WSL2)
 VERSION=3.0.0 bash engine/build.sh
 ```
+---
 
 ### Build Steps
 
@@ -58,6 +66,8 @@ VERSION=3.0.0 bash engine/build.sh
 2. **Brand** — Applies Aurora Browser name, icons, defaults
 3. **Build** — Compiles LibWeb + LibJS + UI (30-120 minutes)
 4. **Package** — Creates distributable directory
+
+---
 
 ## Code Signing
 
@@ -72,6 +82,8 @@ export AURORA_SIGN_PASS=your-password
 VERSION=3.0.0 bash engine/sign.sh build VERSION
 ```
 
+---
+
 ### SmartScreen Reputation
 
 Windows SmartScreen builds reputation organically after code signing. To expedite:
@@ -80,6 +92,8 @@ Windows SmartScreen builds reputation organically after code signing. To expedit
 2. Always timestamp signatures (RFC 3161)
 3. Publish `checksums-SHA256.txt` with every release
 4. If falsely flagged, submit at https://www.microsoft.com/en-us/wdsi/filesubmission
+
+---
 
 ## Engine: LibWeb (Ladybird)
 
@@ -98,6 +112,8 @@ Aurora Browser is built on [LibWeb](https://github.com/LadybirdBrowser/ladybird)
 - HTTP/2, HTTP/3, TLS 1.3
 - Basic WebGL
 
+---
+
 ### What doesn't (yet)
 - Browser extensions
 - WebRTC
@@ -105,10 +121,14 @@ Aurora Browser is built on [LibWeb](https://github.com/LadybirdBrowser/ladybird)
 - Advanced media codecs
 - Full DevTools parity
 
+---
+
 ## License
 
 - **Browser**: MIT License
 - **Engine (LibWeb)**: BSD-2-Clause License (Ladybird Browser Initiative)
+
+---
 
 ## Credits
 
