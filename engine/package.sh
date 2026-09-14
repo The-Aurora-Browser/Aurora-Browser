@@ -48,18 +48,21 @@ LAUNCH
     fi
     if [ -z "$APP" ]; then
       echo "ERROR: Could not find Ladybird.app bundle."
+      echo "Build output contents:"
+      find "$BUILD_DIR" -name "*.app" -type d 2>/dev/null | head -5
       exit 1
     fi
 
     # Rename to Aurora Browser.app
     cp -R "$APP" "$INSTALL_DIR/Aurora Browser.app"
 
-    # Update Info.plist
+    # Update Info.plist using perl (portable, handles multiline)
     PLIST="$INSTALL_DIR/Aurora Browser.app/Contents/Info.plist"
     if [ -f "$PLIST" ]; then
-      sed -i '' 's/CFBundleName<\/key>\n\s*<string>Ladybird/CFBundleName<\/key>\n\t\t<string>Aurora Browser/g' "$PLIST" 2>/dev/null || \
-        sed -i '' 's/>Ladybird</>Aurora Browser</g' "$PLIST"
-      sed -i '' 's/CFBundleIdentifier.*ladybird/CFBundleIdentifier>com.aurora.browser</g' "$PLIST" 2>/dev/null || true
+      perl -pi -e 's|(>)(Ladybird)(</string>)|$1Aurora Browser$3|g' "$PLIST"
+      perl -pi -e 's|(>)(org\.serenityos\.ladybird)(</string>)|$1com.aurora.browser$3|g' "$PLIST"
+      perl -pi -e 's|(CFBundleName</key>\s*<string>)([^<]*)(</string>)|$1Aurora Browser$3|g' "$PLIST"
+      echo "  Info.plist patched: Aurora Browser"
     fi
     ;;
 

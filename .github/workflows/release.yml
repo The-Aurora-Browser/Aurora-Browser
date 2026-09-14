@@ -217,18 +217,37 @@ jobs:
       - name: Build Ladybird (Release)
         working-directory: build/ladybird
         run: |
-          LLVM_DIR="$(brew --prefix llvm 2>/dev/null || true)"
-          if [ -d "$LLVM_DIR" ]; then
-            export CC="$LLVM_DIR/bin/clang"
-            export CXX="$LLVM_DIR/bin/clang++"
+          set -euo pipefail
+          # Use Homebrew LLVM if available (Apple Clang may lack C++23 support)
+          LLVM_PREFIX="$(brew --prefix llvm 2>/dev/null || true)"
+          if [ -d "$LLVM_PREFIX" ]; then
+            export CC="$LLVM_PREFIX/bin/clang"
+            export CXX="$LLVM_PREFIX/bin/clang++"
+            echo "Using LLVM from: $LLVM_PREFIX"
+            "$CC" --version
+          else
+            echo "Using system compiler: $(which clang)"
+            clang --version
           fi
           BUILD_PRESET=Release ./Meta/ladybird.py build
 
+      - name: Verify build output
+        run: |
+          set -euo pipefail
+          echo "=== Build output ==="
+          find build/ladybird -name "*.app" -type d 2>/dev/null || true
+          find build/ladybird -name "ladybird" -type f 2>/dev/null | head -5 || true
+          find build/ladybird/Build -maxdepth 3 -type f 2>/dev/null | head -20 || true
+
       - name: Package Aurora Browser
         run: |
+          set -euo pipefail
           VERSION=${{ needs.check-version.outputs.version }}
           bash ./engine/package.sh build/ladybird \
             build/aurora-browser-${VERSION}-macos $VERSION
+          echo "=== Package output ==="
+          find build/aurora-browser-${VERSION}-macos -maxdepth 3 -type f 2>/dev/null | head -20
+          ls -la "build/aurora-browser-${VERSION}-macos/Aurora Browser.app/Contents/" 2>/dev/null || true
 
       - name: Code sign (ad-hoc)
         run: |
@@ -236,20 +255,25 @@ jobs:
           if [ -n "$APP" ]; then
             codesign --force --deep --sign - "$APP" 2>/dev/null || true
             echo "Ad-hoc signed: $APP"
+          else
+            echo "::warning::No .app bundle found for code signing"
           fi
 
       - name: Create DMG
         run: |
+          set -euo pipefail
           VERSION=${{ needs.check-version.outputs.version }}
           APP=$(find build -name "Aurora Browser.app" -type d | head -n1)
-          if [ -n "$APP" ]; then
-            hdiutil create -volname "Aurora Browser" \
-              -srcfolder "$APP" -ov -format UDZO \
-              "build/Aurora-Browser-${VERSION}-macOS.dmg"
-            echo "DMG created"
-          else
-            echo "::warning::No .app bundle found, skipping DMG"
+          if [ -z "$APP" ]; then
+            echo "::error::Aurora Browser.app not found in build/"
+            find build -name "*.app" -type d 2>/dev/null || true
+            exit 1
           fi
+          hdiutil create -volname "Aurora Browser" \
+            -srcfolder "$APP" -ov -format UDZO \
+            "build/Aurora-Browser-${VERSION}-macOS.dmg"
+          echo "DMG created: build/Aurora-Browser-${VERSION}-macOS.dmg"
+          ls -lh "build/Aurora-Browser-${VERSION}-macOS.dmg"
 
       - name: Generate checksums
         run: |
@@ -259,9 +283,13 @@ jobs:
           DMG=$(ls Aurora-Browser-*-macOS.dmg 2>/dev/null | head -n1)
           if [ -n "$DMG" ]; then
             sha256sum "$DMG" > checksums-SHA256-macos-${VERSION}.txt
+            echo "Checksums:"
             cat checksums-SHA256-macos-${VERSION}.txt
           else
-            echo "::warning::No DMG found to checksum"
+            echo "::error::No DMG found to checksum"
+            echo "Build directory contents:"
+            find . -maxdepth 2 -type f -name "*.dmg" -o -name "*.app" 2>/dev/null || true
+            exit 1
           fi
 
       - name: Upload macOS build
@@ -271,7 +299,7 @@ jobs:
           path: |
             build/Aurora-Browser-*-macOS.dmg
             build/checksums-SHA256-macos-*.txt
-          if-no-files-found: warn
+          if-no-files-found: error
 
   build-windows:
     needs: check-version

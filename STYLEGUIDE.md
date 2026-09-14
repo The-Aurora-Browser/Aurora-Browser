@@ -54,7 +54,7 @@ All bash scripts (`engine/*.sh`, `scripts/build/build.sh`, `installer/build.sh`)
 #!/usr/bin/env bash
 set -euo pipefail
 DIR="$(cd "$(dirname "$0")" && pwd)"
-VERSION="${VERSION:-2.1.6}"
+VERSION="${VERSION:-2.1.7}"
 
 # Quote every variable, guard every cd
 # Prefer functions for non-trivial logic
@@ -157,7 +157,7 @@ File: `windows/src/AuroraBrowser.cs`
 
 ## Packaging Conventions
 
-- **Versions:** Single source of truth is the `VERSION` file (currently `2.1.6`).
+- **Versions:** Single source of truth is the `VERSION` file (currently `2.1.7`).
 - **Artifacts:** Always output to `build/` (and deb copy at `aurora-browser_${V}_amd64.deb` for compatibility). Never commit artifacts (`*.deb`, `*.rpm`, `*.AppImage`, `*.dmg` are `.gitignore`d).
 - **Desktop entry:** `aurora-browser.desktop` must set `Exec=aurora-browser` and `Icon=aurora`.
 - **Engine scripts are the source of truth.** Package builders live in `engine/` — edit the source there.

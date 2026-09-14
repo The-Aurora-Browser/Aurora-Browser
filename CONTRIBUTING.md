@@ -86,9 +86,9 @@ npm run preview  # Preview dist/ locally
 ### Build a Package Locally
 
 ```bash
-VERSION=2.1.6 bash engine/build-deb.sh     # .deb
-VERSION=2.1.6 bash engine/build-rpm.sh     # .rpm
-VERSION=2.1.6 bash engine/build-appimage.sh # .AppImage
+VERSION=2.1.7 bash engine/build-deb.sh     # .deb
+VERSION=2.1.7 bash engine/build-rpm.sh     # .rpm
+VERSION=2.1.7 bash engine/build-appimage.sh # .AppImage
 
 # Orchestrator shorthand
 bash scripts/build/build.sh linux
@@ -252,7 +252,7 @@ Releases are cut via GitHub Actions and GitHub Releases (maintainers only):
 bash scripts/build/build.sh linux
 
 # Create a release (requires gh auth + push rights)
-gh release create v2.1.6 --title "Aurora Browser v2.1.6" --notes "..." build/*
+gh release create v2.1.7 --title "Aurora Browser v2.1.7" --notes "..." build/*
 ```
 
 See `.github/workflows/release.yml` and `release-drafter.yml` for automation.
