@@ -2,6 +2,9 @@
 /build/
 /build-ladybird/
 
+# Extension build output (built in CI, not tracked)
+extension/dist/
+
 # Engine (cloned Ladybird source)
 engine/ladybird/
 

@@ -22,11 +22,10 @@ This guide defines coding, naming, and documentation conventions for Aurora Brow
 
 ## General Principles
 
-1. **Reuse `common/`** — Don’t duplicate `launch.sh`, `update.sh`, `update.conf`, or `setup-sandbox.sh`. Package-specific builders copy or symlink them.
-2. **Fail safe** — Update scripts must never brick the install. The fix in `38f39f3` (tolerate missing `chrome-linux` asset + fallback snapshot) is the model: log, fallback, don’t `exit 1` on transient release gaps.
-3. **Profile isolation** — Never write outside the self-contained profile unless explicitly required (e.g., `setup-sandbox.sh` needs root for chrome-sandbox perms). Document any exception.
-4. **Small PRs** — Prefer <400 lines. Split refactor + feat into separate commits/PRs.
-5. **Docs accompany code** — If you change install or build steps, update `README.md`, `linux/README.md`, and platform READMEs in the same PR.
+1. **Fail safe** — Build and install scripts must never brick the install. Log errors clearly, provide fallbacks where possible.
+2. **Profile isolation** — Never write outside the self-contained profile unless explicitly required. Document any exception.
+3. **Small PRs** — Prefer <400 lines. Split refactor + feat into separate commits/PRs.
+4. **Docs accompany code** — If you change install or build steps, update `README.md` and platform READMEs in the same PR.
 
 ---
 
@@ -185,7 +184,7 @@ npm --prefix extension install
 npm --prefix extension run build
 ```
 
-No auto-formatter is enforced yet — keep diffs minimal and match surrounding style. If we adopt `prettier`/`editorconfig`, this section will be updated.
+No auto-formatter is enforced yet — keep diffs minimal and match surrounding style. See `.editorconfig` for editor-level formatting settings.
 
 ---
 
@@ -199,7 +198,7 @@ Use this when reviewing or self-reviewing:
 - [ ] No secrets / tokens / absolute paths
 - [ ] `update.sh` / `update.ps1` still safe to re-run; fallback behavior preserved
 - [ ] Profile isolation intact (`--user-data-dir` self-contained)
-- [ ] Docs updated (`README.md`, `linux/README.md`, platform READMEs, `SECURITY.md` if needed)
+- [ ] Docs updated (`README.md`, `packages/linux/README.md`, `SECURITY.md` if needed)
 - [ ] Screenshots for UI changes
 - [ ] Tested at least one package install that was touched
 

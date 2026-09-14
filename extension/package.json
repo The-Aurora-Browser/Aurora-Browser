@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "prepare": "cd .. && husky extension/.husky"
   },
   "dependencies": {
     "framer-motion": "^13.1.1",
@@ -15,6 +16,14 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.4",
-    "vite": "^6.0.0"
+    "vite": "^6.0.0",
+    "husky": "^9.1.0",
+    "lint-staged": "^15.2.0"
+  },
+  "lint-staged": {
+    "*.{js,jsx}": [
+      "npx vite build --mode production"
+    ],
+    "*.sh": "bash -n"
   }
 }

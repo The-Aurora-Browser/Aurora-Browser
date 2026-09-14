@@ -33,7 +33,7 @@ This project adheres to the [Contributor Covenant Code of Conduct](CODE_OF_CONDU
 - **Report bugs** — Use the *Bug report* issue template; include platform, version, repro steps, and logs/screenshots.
 - **Request features** — Use the *Feature request* template; describe the use case and alternatives.
 - **Fix bugs / implement features** — Comment on an issue to claim it, then open a PR (see below).
-- **Improve packaging** — `packages/linux/*`, `packages/macos/`, `packages/windows/` all welcome platform-specific expertise (legacy `linux/`, `macos/`, `windows/` shims delegate to `packages/`).
+- **Improve packaging** — `packages/linux/*`, `packages/macos/`, `packages/windows/` all welcome platform-specific expertise.
 - **Improve docs** — README, wiki, comments, and examples.
 - **Review PRs** — Helpful reviews are a contribution!
 
@@ -190,7 +190,7 @@ Before opening a PR:
   for f in scripts/build/build.sh engine/build.sh engine/brand.sh engine/build-deb.sh engine/build-rpm.sh engine/build-appimage.sh engine/build-exe.sh installer/build.sh; do bash -n "$f" && echo "OK $f"; done
   ```
 - [ ] Test the package you touched (install the artifact you built if possible).
-- [ ] Update docs (`README.md`, `linux/README.md`, etc.) if behavior or install steps changed.
+- [ ] Update docs (`README.md`, `packages/linux/README.md`, etc.) if behavior or install steps changed.
 
 When you open the PR:
 
@@ -205,9 +205,8 @@ After merge, delete your branch.
 
 ### What we look for in reviews
 
-- Correctness, edge cases, and error handling (especially `update.sh` fallback logic)
+- Correctness, edge cases, and error handling
 - No secrets, credentials, or absolute local paths
-- Backwards compatibility of launch/update scripts
 - Accessibility and performance for `extension/` changes
 - Documentation completeness
 
@@ -219,7 +218,7 @@ Full details: [STYLEGUIDE.md](STYLEGUIDE.md)
 
 **TL;DR:**
 
-- **Shell** — `set -euo pipefail`, `bash -n` clean, quote variables, prefer `common/` reuse
+- **Shell** — `set -euo pipefail`, `bash -n` clean, quote variables
 - **JavaScript/React** — Vite + React 18, Framer Motion for animations, keep components small
 - **C# (Windows)** — follow existing `windows/src/AuroraBrowser.cs` style
 - **Markdown** — wrap lines sensibly, use fenced code blocks with language tags
@@ -238,7 +237,6 @@ There is no full automated test suite yet — contributions adding tests are esp
 - [ ] New Tab renders correctly (if `extension/` changed) — test via `npm run preview` or installed browser
 - [ ] Shell scripts pass `bash -n` and `shellcheck` (if available)
 - [ ] Built package installs and launches (test at least one Linux target you modified)
-- [ ] Update flow still works (`update.sh` / `update.ps1` dry-run)
 - [ ] No regressions in profile isolation (`--user-data-dir` still self-contained)
 
 If you add automated checks, document how to run them in the PR description and in `STYLEGUIDE.md`.
