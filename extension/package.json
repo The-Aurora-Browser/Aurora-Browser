@@ -10,15 +10,15 @@
     "prepare": "cd .. && husky extension/.husky"
   },
   "dependencies": {
-    "framer-motion": "^13.1.1",
+    "framer-motion": "^13.3.0",
     "react": "^19.3.0",
-    "react-dom": "^18.3.1"
+    "react-dom": "^19.3.0"
   },
   "devDependencies": {
-    "@vitejs/plugin-react": "^4.3.4",
+    "@vitejs/plugin-react": "^6.1.1",
     "vite": "^8.3.0",
     "husky": "^9.1.0",
-    "lint-staged": "^15.2.0"
+    "lint-staged": "^17.5.1"
   },
   "lint-staged": {
     "*.{js,jsx}": [
