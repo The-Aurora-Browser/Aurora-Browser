@@ -10,7 +10,7 @@ Aurora Browser is packaged for major Linux distro families. Choose the package t
 | `debian/`             | Ubuntu, Debian, Linux Mint, Pop!_OS, elementaryOS        | `.deb`         |
 | `redhat/`             | Fedora, RHEL, CentOS, Rocky, AlmaLinux                   | `.rpm`         |
 | `arch/`               | Arch, Manjaro, EndeavourOS, Garuda                       | `PKGBUILD`     |
-| `common/`             | Shared scripts used by all package types                 | —              |
+| `common/`             | Shared scripts (historical)                              | —              |
 
 ## Which should I use?
 
@@ -26,46 +26,39 @@ extension is built automatically if `extension/node_modules` exists.
 
 **Debian (.deb):**
 ```bash
-VERSION=2.0.1 bash linux/debian/build.sh
+VERSION=2.0.1 bash engine/build-deb.sh
 ```
 
 **RedHat / Fedora (.rpm):**
 ```bash
-VERSION=2.0.1 bash linux/redhat/build.sh
+VERSION=2.0.1 bash engine/build-rpm.sh
 ```
 
 **Arch (PKGBUILD):**
 ```bash
-cd linux/arch && makepkg -si
+cd packages/linux/arch && makepkg -si
 ```
 
 **AppImage (universal):**
 ```bash
-VERSION=2.0.1 bash linux/appimage/build.sh
+VERSION=2.0.1 bash engine/build-appimage.sh
 ```
 
-## Shared scripts (`common/`)
+## Engine scripts (`engine/`)
 
-The `common/` directory holds the launcher, updater, and sandbox setup that are
-identical across every package. Package-specific build scripts copy these into
-the correct locations for each format.
+The `engine/` directory holds the main build and packaging scripts:
 
-- `launch.sh` — loads the engine with self-contained profile
-- `update.sh` — downloads/updates the Aurora engine
-- `update.conf` — GitHub repo config for updates
-- `setup-sandbox.sh` — sets sandbox permissions
+- `build.sh` — clones Ladybird, applies branding, compiles
+- `brand.sh` — applies Aurora Browser branding to Ladybird source
+- `build-deb.sh` — builds `.deb` packages
+- `build-rpm.sh` — builds `.rpm` packages
+- `build-appimage.sh` — builds `.AppImage`
+- `build-exe.sh` — builds Windows packages
 
 ## Engine download
 
-Aurora Browser uses a self-contained engine that is downloaded automatically on
-first run (or via `update.sh`). On this project the engine directory is still
-named `chrome-linux/` internally because it ships an actual Chromium engine; do
-not confuse this internal engine path with the Aurora Browser product name.
+Aurora Browser uses the Ladybird LibWeb engine which is compiled from source during the build process. The engine binary is included in the package.
 
 ## Auto-updates
 
-The browser checks for updates once per day. To force a check:
-
-```bash
-sudo /opt/aurora-browser/update.sh
-```
+Aurora Browser checks for updates via the update mechanism in the engine build scripts.

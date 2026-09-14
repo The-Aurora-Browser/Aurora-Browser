@@ -35,9 +35,7 @@ CLI switches:
 ## Build from source
 
 ```bash
-VERSION=2.0.1 bash packages/linux/appimage/build.sh
-# or the legacy path:
-VERSION=2.0.1 bash linux/appimage/build.sh
+VERSION=2.0.1 bash engine/build-appimage.sh
 ```
 
 The script downloads `linuxdeploy` automatically on first run and produces:

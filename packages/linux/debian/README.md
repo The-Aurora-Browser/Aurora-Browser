@@ -13,7 +13,7 @@ The browser engine is downloaded automatically on first launch.
 
 ```bash
 sudo apt install dpkg-dev fakeroot nodejs npm
-VERSION=2.0.1 bash linux/debian/build.sh
+VERSION=2.0.1 bash engine/build-deb.sh
 sudo dpkg -i aurora-browser_*.deb
 ```
 

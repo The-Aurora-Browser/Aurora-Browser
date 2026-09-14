@@ -80,7 +80,7 @@ rpmbuild -bb --define "_topdir $RPMBUILD_DIR" "$RPMBUILD_DIR/SPECS/aurora-browse
   mkdir -p "$OUTPUT_DIR"
   echo "RPM build skipped - rpmbuild not installed" > "$OUTPUT_DIR/aurora-browser-${VERSION}-1.x86_64.rpm"
   rm -rf "$STAGE" "$RPMBUILD_DIR"
-  return 0 2>/dev/null || exit 0
+  exit 0
 }
 
 RPM="$OUTPUT_DIR/aurora-browser-${VERSION}-1.x86_64.rpm"

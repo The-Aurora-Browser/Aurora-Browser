@@ -9,7 +9,7 @@ ROOT="$(cd "$DIR/.." && pwd)"
 if [ -z "${VERSION:-}" ] && [ -f "$ROOT/VERSION" ]; then
   VERSION="$(cat "$ROOT/VERSION")"
 fi
-VERSION="${VERSION:-3.0.0}"
+VERSION="${VERSION:-2.1.3}"
 
 echo "==> Building Aurora Browser installer (version $VERSION) ..."
 
@@ -91,14 +91,17 @@ src, out = sys.argv[1], sys.argv[2]
 def add(z, base, rel):
     p = os.path.join(base, rel)
     if os.path.isdir(p):
-        zi = zipfile.ZipInfo.from_file(p, rel + "/")
-        zi.compress_type = zipfile.ZIP_DEFLATED
-        z.writestr(zi, b"")
+        if rel:
+            zi = zipfile.ZipInfo(rel.rstrip("/") + "/")
+            zi.compress_type = zipfile.ZIP_DEFLATED
+            zi.external_attr = 0o40755 << 16
+            z.writestr(zi, b"")
         for name in sorted(os.listdir(p)):
-            add(z, base, os.path.join(rel, name))
+            child = os.path.join(rel, name) if rel else name
+            add(z, base, child)
     else:
         st = os.stat(p)
-        zi = zipfile.ZipInfo.from_file(p, rel)
+        zi = zipfile.ZipInfo(rel)
         zi.external_attr = (st.st_mode & 0xFFFF) << 16
         zi.compress_type = zipfile.ZIP_DEFLATED
         with open(p, "rb") as f:

@@ -9,7 +9,7 @@ ROOT="$(cd "$DIR/../.." && pwd)"
 if [ -z "${VERSION:-}" ] && [ -f "$ROOT/VERSION" ]; then
   VERSION="$(cat "$ROOT/VERSION")"
 fi
-VERSION="${VERSION:-3.0.0}"
+VERSION="${VERSION:-2.1.3}"
 
 ENGINE_DIR="$ROOT/engine"
 

@@ -23,7 +23,7 @@ Requires `rpm-build`:
 
 ```bash
 sudo dnf install rpm-build
-VERSION=2.0.1 bash linux/redhat/build.sh
+VERSION=2.0.1 bash engine/build-rpm.sh
 ```
 
 Output: `build/aurora-browser-2.0.1-1.x86_64.rpm`

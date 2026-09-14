@@ -6,8 +6,8 @@ Aurora Browser is under active development. Only the latest release line receive
 
 | Version | Supported |
 |---|---|
-| `2.0.x` (latest `2.0.6`) | ✅ |
-| `< 2.0` | ❌ — please upgrade |
+| `2.1.x` (latest `2.1.3`) | ✅ |
+| `< 2.1` | ❌ — please upgrade |
 
 We release patches for critical vulnerabilities as fast as possible (target: 7 days from report to fix or mitigation). Check [Releases](https://github.com/Draftiermovie66/Aurora-Browser/releases) for the latest version.
 
@@ -51,7 +51,7 @@ We use CVSS 3.1 to prioritize. Critical/High issues (remote code execution, sand
 
 ### Updater & Engine Downloads
 
-- `linux/common/update.sh` and `windows/update.ps1` fetch engine archives from GitHub Releases (or fallback Chromium snapshots). **Verify** you are running the latest release before reporting an updater issue.
+- `engine/build.sh` and related scripts handle engine downloads and updates. **Verify** you are running the latest release before reporting an updater issue.
 - Do not run `update.sh` with untrusted `update.conf` — it controls the source repo and asset names.
 - On Linux, re-run `setup-sandbox.sh` after manual engine updates if you hit sandbox errors — incorrect sandbox perms weaken the Chromium sandbox.
 

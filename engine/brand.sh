@@ -10,7 +10,7 @@ LADYBIRD_DIR="${1:?Usage: brand.sh <ladybird-dir>}"
 if [ -z "${VERSION:-}" ] && [ -f "$ROOT/VERSION" ]; then
   VERSION="$(cat "$ROOT/VERSION")"
 fi
-VERSION="${VERSION:-3.0.0}"
+VERSION="${VERSION:-2.1.3}"
 
 echo "  Branding Ladybird as Aurora Browser v${VERSION}..."
 
@@ -34,7 +34,7 @@ replace 's/"Ladybird"/"Aurora Browser"/g' "$LADYBIRD_DIR/UI/Qt/MainWidget.cpp"
 replace 's/@"Ladybird"/@"Aurora Browser"/g' "$LADYBIRD_DIR/UI/AppKit/main.mm"
 
 # ---- Default new tab URL ----
-replace 's|about:blank|about:blank|g' "$LADYBIRD_DIR/UI/Qt/Settings.cpp"
+# intentionally left as-is: about:blank is the correct default
 
 # ---- Icons ----
 AURORA_ICON="$ROOT/assets/icons/aurora.png"

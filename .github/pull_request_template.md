@@ -23,15 +23,11 @@ Closes #
 <!-- Check all that apply -->
 
 - [ ] `extension/` — React New Tab (Vite)
-- [ ] `linux/common` — shared launch.sh / update.sh / setup-sandbox.sh
-- [ ] `linux/debian` — .deb
-- [ ] `linux/redhat` — .rpm
-- [ ] `linux/arch` — PKGBUILD
-- [ ] `linux/appimage` — AppImage
-- [ ] `macos` — .dmg / .app
-- [ ] `windows` — launcher / build.ps1 / update.ps1
+- [ ] `engine/` — build scripts (build.sh, brand.sh, packaging)
+- [ ] `installer/` — Native Qt installer
+- [ ] `scripts/` — build orchestrator, smoke tests
 - [ ] `docs` — README / CONTRIBUTING / guides
-- [ ] `ci` / `release` — workflows / release.sh
+- [ ] `ci` / `release` — workflows
 
 ## How to test
 
@@ -41,7 +37,7 @@ Closes #
 # Example:
 npm --prefix extension install
 npm --prefix extension run build
-VERSION=2.0.6 bash linux/debian/build.sh
+VERSION=2.1.3 bash engine/build-deb.sh
 # then install & launch artifact from build/
 ```
 

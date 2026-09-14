@@ -51,7 +51,7 @@ This project adheres to the [Contributor Covenant Code of Conduct](CODE_OF_CONDU
 | git | 2.30+ | Version control |
 | PowerShell | 5+ | Windows build only |
 | Xcode CLI Tools | — | macOS `.dmg` only |
-| `gh` CLI | — | `release.sh --push` only |
+| `gh` CLI | — | Release automation only |
 
 ### Clone & Install
 
@@ -63,12 +63,14 @@ cd Aurora-Browser
 npm --prefix extension install
 npm --prefix extension run build
 
-# Verify shell scripts (canonical + shims)
-bash -n scripts/build/build.sh && bash -n build.sh
-bash -n scripts/build/release.sh && bash -n release.sh
-for f in packages/linux/common/*.sh packages/linux/debian/*.sh packages/linux/redhat/*.sh packages/linux/appimage/*.sh packages/macos/*.sh; do
-  bash -n "$f" && echo "OK $f"
-done
+# Verify shell scripts
+bash -n scripts/build/build.sh
+bash -n engine/build.sh
+bash -n engine/brand.sh
+bash -n engine/build-deb.sh
+bash -n engine/build-rpm.sh
+bash -n engine/build-appimage.sh
+bash -n engine/build-exe.sh
 ```
 
 ### Run the Extension in Dev Mode
@@ -84,21 +86,17 @@ npm run preview  # Preview dist/ locally
 ### Build a Package Locally
 
 ```bash
-VERSION=2.0.6 bash packages/linux/debian/build.sh     # .deb
-VERSION=2.0.6 bash packages/linux/redhat/build.sh     # .rpm
-VERSION=2.0.6 bash packages/linux/appimage/build.sh   # .AppImage
-cd packages/linux/arch && makepkg -si                  # Arch (reads VERSION)
+VERSION=2.1.3 bash engine/build-deb.sh     # .deb
+VERSION=2.1.3 bash engine/build-rpm.sh     # .rpm
+VERSION=2.1.3 bash engine/build-appimage.sh # .AppImage
 
 # Orchestrator shorthand
-./build.sh deb        # shim → scripts/build/build.sh → packages/...
-./build.sh rpm
-./build.sh appimage
-./build.sh arch       # → packages/linux/arch
-./build.sh macos      # must run on macOS
-./build.sh windows    # must run on Windows / powershell
+bash scripts/build/build.sh linux
+bash scripts/build/build.sh macos      # must run on macOS
+bash scripts/build/build.sh windows    # must run on Windows / powershell
 ```
 
-Artifacts land in `build/` (and deb copy at repo root). See [`packages/linux/README.md`](packages/linux/README.md) and platform READMEs for details. Legacy paths (`linux/debian/build.sh`) still work via shims.
+Artifacts land in `build/`. See [`packages/linux/README.md`](packages/linux/README.md) and platform READMEs for details.
 
 ---
 
@@ -107,26 +105,22 @@ Artifacts land in `build/` (and deb copy at repo root). See [`packages/linux/REA
 ```
 VERSION                                           # single source of truth
 assets/icons/aurora.png                           # canonical icon
-extension/        React new-tab (Vite). Manifest V3, newtab override.
-packages/linux/common/     Shared launch.sh, update.sh, update.conf, setup-sandbox.sh
-packages/linux/debian/     Debian packaging
-packages/linux/redhat/     RPM packaging
-packages/linux/arch/       PKGBUILD + aurora-browser.install
-packages/linux/appimage/   AppImage packaging
-packages/macos/            .app bundle + .dmg builder
-packages/windows/          C# launcher + PowerShell builders
-scripts/build/             build.sh + release.sh (canonical)
-scripts/checks/            smoke-update-check.sh, validate-yaml.py
-build.sh / release.sh      Shims → scripts/build/*
-linux/ macos/ windows/      Legacy shims → packages/* (kept for compat)
+engine/                 Build scripts: build.sh, brand.sh, packaging scripts
+extension/              React new-tab (Vite). Manifest V3, newtab override.
+installer/              Native Qt C++ installer
+packages/linux/         Platform READMEs (debian, redhat, arch, appimage)
+packages/macos/         macOS packaging
+packages/windows/       Windows packaging
+scripts/build/          Build orchestrator (build.sh)
+scripts/checks/         Smoke tests, YAML validation
 ```
 
 **Key files to know:**
 
 - `extension/manifest.json` — MV3 new-tab override → `dist/index.html`
 - `extension/vite.config.js` — `base: './'`, deterministic asset names
-- `linux/common/launch.sh` — Chromium flags + `--user-data-dir` isolation
-- `linux/common/update.sh` — daily update check + snapshot fallback
+- `engine/build.sh` — Main build script (clone, brand, compile)
+- `engine/build-deb.sh`, `engine/build-rpm.sh`, `engine/build-appimage.sh` — Package builders
 
 ---
 
@@ -193,7 +187,7 @@ Before opening a PR:
 - [ ] Run local checks:
   ```bash
   npm --prefix extension install && npm --prefix extension run build
-  for f in build.sh release.sh linux/common/*.sh linux/debian/*.sh linux/redhat/*.sh linux/appimage/*.sh macos/*.sh; do bash -n "$f"; done
+  for f in scripts/build/build.sh engine/build.sh engine/brand.sh engine/build-deb.sh engine/build-rpm.sh engine/build-appimage.sh engine/build-exe.sh installer/build.sh; do bash -n "$f" && echo "OK $f"; done
   ```
 - [ ] Test the package you touched (install the artifact you built if possible).
 - [ ] Update docs (`README.md`, `linux/README.md`, etc.) if behavior or install steps changed.
@@ -253,16 +247,14 @@ If you add automated checks, document how to run them in the PR description and 
 
 ## Release Process
 
-Releases are cut via `release.sh` and GitHub Releases (maintainers only):
+Releases are cut via GitHub Actions and GitHub Releases (maintainers only):
 
 ```bash
-# Dry-run: builds deb, AppImage, rpm, dmg (and win exe on Windows) and lists assets
-./build.sh release 2.0.7
-bash release.sh v2.0.7           # same
+# Build all packages
+bash scripts/build/build.sh linux
 
-# Publish (requires gh auth + push rights)
-bash release.sh v2.0.7 --push
-gh release create v2.0.7 --title "Aurora Browser v2.0.7" --notes "..." <assets>
+# Create a release (requires gh auth + push rights)
+gh release create v2.1.4 --title "Aurora Browser v2.1.4" --notes "..." build/*
 ```
 
 See `.github/workflows/release.yml` and `release-drafter.yml` for automation.

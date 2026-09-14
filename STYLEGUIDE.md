@@ -49,13 +49,13 @@ This guide defines coding, naming, and documentation conventions for Aurora Brow
 
 ## Shell (`*.sh`)
 
-All bash scripts (`build.sh`, `release.sh`, `linux/*/*.sh`, `macos/*.sh`, `linux/common/*.sh`) must follow:
+All bash scripts (`engine/*.sh`, `scripts/build/build.sh`, `installer/build.sh`) must follow:
 
 ```bash
 #!/usr/bin/env bash
 set -euo pipefail
 DIR="$(cd "$(dirname "$0")" && pwd)"
-VERSION="${VERSION:-2.0.6}"
+VERSION="${VERSION:-2.1.3}"
 
 # Quote every variable, guard every cd
 # Prefer functions for non-trivial logic
@@ -147,21 +147,21 @@ File: `windows/src/AuroraBrowser.cs`
 - **Headings:** ATX (`#`, `##`) with blank line before/after. One `#` per file.
 - **Code blocks:** Fenced with language tag: ````bash`, ````js`, ````powershell`
 - **Lines:** Wrap at ~100 chars where reasonable; don’t break URLs or code.
-- **Links:** Relative for in-repo: `[linux README](linux/README.md)`, absolute for external.
+- **Links:** Relative for in-repo: `[linux README](packages/linux/README.md)`, absolute for external.
 - **Images:** Alt text required: `![Aurora New Tab](aurora.png)`
 - **Terminology:** Consistent:
   - Product: **Aurora Browser** (capitalized)
-  - Engine: **Chromium engine** / `chrome-linux/` (internal path)
+  - Engine: **LibWeb engine** (Ladybird)
   - Packages: `.deb`, `.rpm`, `PKGBUILD`, `.AppImage`, `.dmg`, `.exe`
 
 ---
 
 ## Packaging Conventions
 
-- **Versions:** Single source of truth is `VERSION` env var (default `2.0.6` today). `release.sh` strips leading `v` (`${TAG#v}`).
+- **Versions:** Single source of truth is the `VERSION` file (currently `2.1.3`).
 - **Artifacts:** Always output to `build/` (and deb copy at `aurora-browser_${V}_amd64.deb` for compatibility). Never commit artifacts (`*.deb`, `*.rpm`, `*.AppImage`, `*.dmg` are `.gitignore`d).
 - **Desktop entry:** `aurora-browser.desktop` must set `Exec=aurora-browser` and `Icon=aurora`.
-- **Copy, don’t edit, `common/`:** `debian/build.sh`, `redhat/build.sh`, `appimage/build.sh` copy from `linux/common/` — edit the source there.
+- **Engine scripts are the source of truth.** Package builders live in `engine/` — edit the source there.
 - **macOS:** Keep `entitlements.plist` minimal; note BETA unsigned status in `macos/README.md`.
 
 ---
@@ -172,13 +172,13 @@ Run before every PR:
 
 ```bash
 # Shell — must pass
-bash -n build.sh && bash -n release.sh
-for f in linux/common/*.sh linux/debian/*.sh linux/redhat/*.sh linux/appimage/*.sh macos/*.sh; do
+bash -n scripts/build/build.sh
+for f in engine/build.sh engine/brand.sh engine/build-deb.sh engine/build-rpm.sh engine/build-appimage.sh engine/build-exe.sh installer/build.sh; do
   bash -n "$f" && echo "OK $f"
 done
 
 # Optional but recommended
-shellcheck linux/common/*.sh  # if installed
+shellcheck engine/*.sh  # if installed
 
 # Extension — must build warning-free
 npm --prefix extension install

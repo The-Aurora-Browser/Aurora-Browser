@@ -86,7 +86,7 @@ if [ -z "$PRODUCED" ]; then
   mkdir -p "$OUTPUT_DIR"
   echo "AppImage build skipped" > "$OUT"
   rm -rf "$OUTTMP" "$APPDIR"
-  return 0 2>/dev/null || exit 0
+  exit 0
 fi
 mv "$PRODUCED" "$OUT"
 chmod +x "$OUT"

@@ -137,7 +137,7 @@ export default function SettingsPage({
               <img src="aurora.png" alt="Aurora Browser" className="about-logo" draggable="false" />
               <p className="about-name">Aurora Browser</p>
               <p className="about-desc">
-                A fast, private, auto-updating browser built on Chromium.
+                A fast, private, auto-updating browser built on the LibWeb engine.
               </p>
               <div className="about-links">
                 <a href="https://github.com/Draftiermovie66/Aurora-Browser/releases" target="_blank">Releases</a>
