@@ -561,7 +561,7 @@ body {
   inset: 0;
   z-index: 120;
   background: rgba(12, 12, 16, 0.82);
-  backdrop-filter: blur(14px);
+  backdrop-filter: blur(8px);
   display: flex;
   flex-direction: column;
   overflow: hidden;

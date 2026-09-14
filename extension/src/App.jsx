@@ -13,11 +13,10 @@ import { SEARCH_ENGINES, loadSearchEngine, saveSearchEngine } from './search';
 const SPRING_REVEAL = { type: 'spring', stiffness: 200, damping: 20 };
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 16, filter: 'blur(4px)' },
+  hidden: { opacity: 0, y: 16 },
   show: (i) => ({
     opacity: 1,
     y: 0,
-    filter: 'blur(0px)',
     transition: { ...SPRING_REVEAL, delay: 0.05 * i },
   }),
 };
@@ -43,15 +42,28 @@ function getLogoSrc() {
   return 'aurora.png';
 }
 
+const RELEASE_CACHE_KEY = 'aurora_release_cache';
+const RELEASE_CACHE_TTL = 3600000; // 1 hour
+
 function getReleaseNotes() {
+  try {
+    const cached = localStorage.getItem(RELEASE_CACHE_KEY);
+    if (cached) {
+      const { data, ts } = JSON.parse(cached);
+      if (Date.now() - ts < RELEASE_CACHE_TTL) return Promise.resolve(data);
+    }
+  } catch { /* ignore */ }
+
   return fetch('https://api.github.com/repos/The-Aurora-Browser/Aurora-Browser/releases/latest')
     .then(r => r.ok ? r.json() : Promise.reject())
     .then(data => {
       const lines = (data.body || '').split('\n').filter(l => l.trim() && !l.startsWith('#'));
-      return {
+      const result = {
         tag: data.tag_name,
         notes: lines.slice(0, 4).map(l => l.replace(/^[-*]\s*/, '').substring(0, 80)),
       };
+      try { localStorage.setItem(RELEASE_CACHE_KEY, JSON.stringify({ data: result, ts: Date.now() })); } catch { /* ignore */ }
+      return result;
     });
 }
 
@@ -287,7 +299,7 @@ export default function App() {
                 transition={SPRING_REVEAL}
               >
                 <div className="shortcut-icon">
-                  <img src={faviconUrl(s.url)} width="32" height="32" alt={s.name} />
+                  <img src={faviconUrl(s.url)} width="32" height="32" alt={s.name} loading="lazy" decoding="async" />
                 </div>
                 <span className="shortcut-name">{s.name}</span>
               </motion.a>
