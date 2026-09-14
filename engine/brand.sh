@@ -56,4 +56,13 @@ fi
 replace 's/Ladybird/Aurora Browser/g' "$LADYBIRD_DIR/UI/Qt/AboutDialog.cpp"
 replace 's/Andreas Kling/Aurora Browser Team/g' "$LADYBIRD_DIR/UI/Qt/AboutDialog.cpp"
 
+# ---- Suppress -Wunused-template for HarfBuzz on Clang ----
+# HarfBuzz template functions trigger -Wunused-template warnings which become
+# fatal errors due to -Werror. Suppress this warning for Clang builds.
+COMPILE_OPTS="$LADYBIRD_DIR/Meta/CMake/compile_options.cmake"
+if [ -f "$COMPILE_OPTS" ]; then
+  replace 's|# Used for the #embed directive.|# Used for the #embed directive.\n    # Suppress -Wunused-template for third-party libs (HarfBuzz) on Clang.\n    add_cxx_compile_options(-Wno-unused-template)|' "$COMPILE_OPTS"
+  echo "  Added -Wno-unused-template for Clang builds"
+fi
+
 echo "  Branding applied."
