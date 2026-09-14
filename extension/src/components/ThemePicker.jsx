@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 export default function ThemePicker({ current, onApply, onClose }) {
   const [bg, setBg] = useState(current.bg && current.bg.charAt(0) === '#' ? current.bg : '#2b2a33');

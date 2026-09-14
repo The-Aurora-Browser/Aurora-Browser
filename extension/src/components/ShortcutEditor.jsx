@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 export default function ShortcutEditor({ shortcuts, onSave, onClose }) {
   const [items, setItems] = useState(shortcuts.map(s => ({ ...s })));

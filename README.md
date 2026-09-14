@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-    <a href="https://github.com//Draftiermovie66/Aurora-Browser/actions/workflows/release.yml">
+    <a href="https://github.com/The-Aurora-Browser/Aurora-Browser/actions/workflows/release.yml">
         <img src="https://shieldcn.dev/badge/Build-Passing-success.svg?logo=githubactions" alt="Build">
     </a>
 </p>

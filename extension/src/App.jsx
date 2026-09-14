@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import GearIcon from './components/GearIcon';
 import SearchIcon from './components/SearchIcon';
@@ -6,11 +6,10 @@ import SettingsPage from './components/SettingsPage';
 import ThemePicker from './components/ThemePicker';
 import ShortcutEditor from './components/ShortcutEditor';
 import { THEMES, applyTheme, getSavedTheme, saveTheme } from './theme';
-import { loadShortcuts, saveShortcuts, DEFAULT_SHORTCUTS } from './shortcuts';
+import { loadShortcuts, saveShortcuts } from './shortcuts';
 import { SEARCH_ENGINES, loadSearchEngine, saveSearchEngine } from './search';
 
 // beUI-style motion tokens
-const EASE_OUT = [0.16, 1, 0.3, 1];
 const SPRING_REVEAL = { type: 'spring', stiffness: 200, damping: 20 };
 
 const fadeUp = {
@@ -45,7 +44,7 @@ function getLogoSrc() {
 }
 
 function getReleaseNotes() {
-  return fetch('https://api.github.com/repos/Draftiermovie66/Aurora-Browser/releases/latest')
+  return fetch('https://api.github.com/repos/The-Aurora-Browser/Aurora-Browser/releases/latest')
     .then(r => r.ok ? r.json() : Promise.reject())
     .then(data => {
       const lines = (data.body || '').split('\n').filter(l => l.trim() && !l.startsWith('#'));
@@ -61,10 +60,10 @@ const FIRST_RUN_STORAGE = 'aurora_first_run';
 const PROFILE_STORAGE = 'aurora_profile_key';
 
 function loadLastSearch() {
-  try { return localStorage.getItem(SEARCH_STORAGE) || ''; } catch (e) { return ''; }
+  try { return localStorage.getItem(SEARCH_STORAGE) || ''; } catch { return ''; }
 }
 function saveLastSearch(value) {
-  try { localStorage.setItem(SEARCH_STORAGE, value); } catch (e) {}
+  try { localStorage.setItem(SEARCH_STORAGE, value); } catch { /* ignore */ }
 }
 
 // Persist a stable profile key across app version bumps so the user's
@@ -75,7 +74,7 @@ function ensureProfileKey() {
     if (!localStorage.getItem(PROFILE_STORAGE)) {
       localStorage.setItem(PROFILE_STORAGE, 'default-' + Date.now().toString(36));
     }
-  } catch (e) {}
+  } catch { /* ignore */ }
 }
 
 export default function App() {
@@ -87,7 +86,7 @@ export default function App() {
   const [release, setRelease] = useState(null);
   const [shortcuts, setShortcuts] = useState(() => loadShortcuts());
   const [query, setQuery] = useState(loadLastSearch);
-  const searchRef = React.useRef(null);
+  const searchRef = useRef(null);
 
   useEffect(() => {
     applyTheme(theme);
@@ -147,7 +146,7 @@ export default function App() {
         first = true;
         localStorage.setItem(FIRST_RUN_STORAGE, '1');
       }
-    } catch (e) {}
+  } catch { /* ignore */ }
     return first;
   });
 
@@ -308,14 +307,14 @@ export default function App() {
           >
             {release ? (
               <>
-                <motion.a className="story" href="https://github.com/Draftiermovie66/Aurora-Browser/releases" target="_blank" variants={fadeUp} whileHover={{ y: -2 }} transition={SPRING_REVEAL}>
+                <motion.a className="story" href="https://github.com/The-Aurora-Browser/Aurora-Browser/releases" target="_blank" variants={fadeUp} whileHover={{ y: -2 }} transition={SPRING_REVEAL}>
                   <div className="story-body">
                     <div className="story-title">{release.tag} is out</div>
                     <div className="story-source">Aurora Browser</div>
                   </div>
                 </motion.a>
                 {release.notes.map((note, i) => (
-                  <motion.a key={i} className="story" href="https://github.com/Draftiermovie66/Aurora-Browser/releases" target="_blank" variants={fadeUp} custom={i} whileHover={{ y: -2 }} transition={SPRING_REVEAL}>
+                  <motion.a key={i} className="story" href="https://github.com/The-Aurora-Browser/Aurora-Browser/releases" target="_blank" variants={fadeUp} custom={i} whileHover={{ y: -2 }} transition={SPRING_REVEAL}>
                     <div className="story-body">
                       <div className="story-title">{note}</div>
                       <div className="story-source">{release.tag}</div>
@@ -324,7 +323,7 @@ export default function App() {
                 ))}
               </>
             ) : (
-              <motion.a className="story" href="https://github.com/Draftiermovie66/Aurora-Browser" target="_blank" variants={fadeUp} whileHover={{ y: -2 }} transition={SPRING_REVEAL}>
+              <motion.a className="story" href="https://github.com/The-Aurora-Browser/Aurora-Browser" target="_blank" variants={fadeUp} whileHover={{ y: -2 }} transition={SPRING_REVEAL}>
                 <div className="story-body">
                   <div className="story-title">Aurora Browser</div>
                   <div className="story-source">Aurora-based &bull; Auto-updating &bull; Private</div>
@@ -345,9 +344,9 @@ export default function App() {
         {isFirstRun && (
           <span className="kbd-hint">Tip: press <kbd>?</kbd> to edit shortcuts, <kbd>/</kbd> to search</span>
         )}
-        <a href="https://github.com/Draftiermovie66/Aurora-Browser/releases" target="_blank">Releases</a>
-        <a href="https://github.com/Draftiermovie66/Aurora-Browser/issues" target="_blank">Report Issue</a>
-        <a href="https://github.com/Draftiermovie66/Aurora-Browser" target="_blank">Source</a>
+        <a href="https://github.com/The-Aurora-Browser/Aurora-Browser/releases" target="_blank">Releases</a>
+        <a href="https://github.com/The-Aurora-Browser/Aurora-Browser/issues" target="_blank">Report Issue</a>
+        <a href="https://github.com/The-Aurora-Browser/Aurora-Browser" target="_blank">Source</a>
       </motion.footer>
 
       <AnimatePresence>

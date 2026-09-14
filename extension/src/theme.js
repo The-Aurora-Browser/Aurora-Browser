@@ -40,7 +40,7 @@ export function getSavedTheme() {
     const saved = JSON.parse(localStorage.getItem('aurora-theme'));
     if (saved && THEMES.find(t => t.id === saved.id)) return saved;
     if (saved && saved.id === 'custom') return saved;
-  } catch {}
+  } catch { /* corrupted data */ }
   return THEMES[0];
 }
 

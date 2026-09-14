@@ -91,7 +91,7 @@ update_engine() {
 
 ## JavaScript / React (`extension/`)
 
-**Stack:** Vite 6 · React 18 · Framer Motion 13 · `manifest_version: 3`
+**Stack:** Vite 8 · React 19 · Framer Motion 13 · `manifest_version: 3`
 
 **Conventions:**
 

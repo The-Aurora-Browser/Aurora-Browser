@@ -13,7 +13,7 @@ export function loadSearchEngine() {
     const id = localStorage.getItem(KEY);
     const eng = SEARCH_ENGINES.find(e => e.id === id);
     return eng || SEARCH_ENGINES[0];
-  } catch (e) {
+  } catch {
     return SEARCH_ENGINES[0];
   }
 }
@@ -21,5 +21,5 @@ export function loadSearchEngine() {
 export function saveSearchEngine(id) {
   try {
     localStorage.setItem(KEY, id);
-  } catch (e) {}
+  } catch { /* storage may be full */ }
 }

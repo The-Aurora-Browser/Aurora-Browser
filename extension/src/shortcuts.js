@@ -13,34 +13,43 @@ export const DEFAULT_SHORTCUTS = [
   { name: 'Spotify',      url: 'https://spotify.com' },
 ];
 
-const COOKIE_NAME = 'aurora_shortcuts';
+const STORAGE_KEY = 'aurora_shortcuts';
 
 export function loadShortcuts() {
   try {
-    const val = getCookie(COOKIE_NAME);
+    const val = localStorage.getItem(STORAGE_KEY);
     if (val) {
-      const parsed = JSON.parse(decodeURIComponent(val));
+      const parsed = JSON.parse(val);
       if (Array.isArray(parsed) && parsed.length > 0) return parsed;
     }
-  } catch (e) {}
+  } catch { /* corrupted data */ }
+  // Migrate from cookies if present
+  migrateFromCookies();
   return DEFAULT_SHORTCUTS;
 }
 
 export function saveShortcuts(shortcuts) {
-  setCookie(COOKIE_NAME, encodeURIComponent(JSON.stringify(shortcuts)), 365);
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(shortcuts));
+  } catch { /* storage may be full */ }
 }
 
 export function resetShortcuts() {
-  document.cookie = COOKIE_NAME + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch { /* ignore */ }
 }
 
-function getCookie(name) {
-  const match = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
-  return match ? match[2] : null;
-}
-
-function setCookie(name, value, days) {
-  const d = new Date();
-  d.setTime(d.getTime() + days * 24 * 60 * 60 * 1000);
-  document.cookie = name + '=' + value + '; expires=' + d.toUTCString() + '; path=/';
+function migrateFromCookies() {
+  try {
+    const match = document.cookie.match('(^|;)\\s*aurora_shortcuts\\s*=\\s*([^;]+)');
+    if (match) {
+      const parsed = JSON.parse(decodeURIComponent(match[2]));
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        saveShortcuts(parsed);
+        // Clear the old cookie
+        document.cookie = 'aurora_shortcuts=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+      }
+    }
+  } catch { /* no cookie to migrate */ }
 }
