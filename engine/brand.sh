@@ -10,7 +10,7 @@ LADYBIRD_DIR="${1:?Usage: brand.sh <ladybird-dir>}"
 if [ -z "${VERSION:-}" ] && [ -f "$ROOT/VERSION" ]; then
   VERSION="$(cat "$ROOT/VERSION")"
 fi
-VERSION="${VERSION:-2.1.3}"
+VERSION="${VERSION:-2.1.6}"
 
 echo "  Branding Ladybird as Aurora Browser v${VERSION}..."
 

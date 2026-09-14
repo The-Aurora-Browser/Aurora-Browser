@@ -6,7 +6,7 @@ Aurora Browser is under active development. Only the latest release line receive
 
 | Version | Supported |
 |---|---|
-| `2.1.x` (latest `2.1.3`) | ✅ |
+| `2.1.x` (latest `2.1.6`) | ✅ |
 | `< 2.1` | ❌ — please upgrade |
 
 We release patches for critical vulnerabilities as fast as possible (target: 7 days from report to fix or mitigation). Check [Releases](https://github.com/Draftiermovie66/Aurora-Browser/releases) for the latest version.

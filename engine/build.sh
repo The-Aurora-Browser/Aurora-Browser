@@ -9,7 +9,7 @@ ROOT="$(cd "$DIR/.." && pwd)"
 if [ -z "${VERSION:-}" ] && [ -f "$ROOT/VERSION" ]; then
   VERSION="$(cat "$ROOT/VERSION")"
 fi
-VERSION="${VERSION:-2.1.3}"
+VERSION="${VERSION:-2.1.6}"
 
 LADYBIRD_REPO="${LADYBIRD_REPO:-https://github.com/LadybirdBrowser/ladybird.git}"
 LADYBIRD_BRANCH="${LADYBIRD_BRANCH:-master}"
