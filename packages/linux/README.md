@@ -10,7 +10,6 @@ Aurora Browser is packaged for major Linux distro families. Choose the package t
 | `debian/`             | Ubuntu, Debian, Linux Mint, Pop!_OS, elementaryOS        | `.deb`         |
 | `redhat/`             | Fedora, RHEL, CentOS, Rocky, AlmaLinux                   | `.rpm`         |
 | `arch/`               | Arch, Manjaro, EndeavourOS, Garuda                       | `PKGBUILD`     |
-| `common/`             | Shared scripts (historical)                              | —              |
 
 ## Which should I use?
 
@@ -21,17 +20,16 @@ Aurora Browser is packaged for major Linux distro families. Choose the package t
 
 ## Building
 
-All builds produce artifacts into the root `build/` directory. The React new tab
-extension is built automatically if `extension/node_modules` exists.
+All builds produce artifacts into the root `build/` directory.
 
 **Debian (.deb):**
 ```bash
-VERSION=2.0.1 bash engine/build-deb.sh
+VERSION=$(cat VERSION) bash engine/build-deb.sh
 ```
 
 **RedHat / Fedora (.rpm):**
 ```bash
-VERSION=2.0.1 bash engine/build-rpm.sh
+VERSION=$(cat VERSION) bash engine/build-rpm.sh
 ```
 
 **Arch (PKGBUILD):**
@@ -41,7 +39,7 @@ cd packages/linux/arch && makepkg -si
 
 **AppImage (universal):**
 ```bash
-VERSION=2.0.1 bash engine/build-appimage.sh
+VERSION=$(cat VERSION) bash engine/build-appimage.sh
 ```
 
 ## Engine scripts (`engine/`)
@@ -55,10 +53,6 @@ The `engine/` directory holds the main build and packaging scripts:
 - `build-appimage.sh` — builds `.AppImage`
 - `build-exe.sh` — builds Windows packages
 
-## Engine download
+## Engine
 
 Aurora Browser uses the Ladybird LibWeb engine which is compiled from source during the build process. The engine binary is included in the package.
-
-## Auto-updates
-
-Aurora Browser checks for updates via the update mechanism in the engine build scripts.

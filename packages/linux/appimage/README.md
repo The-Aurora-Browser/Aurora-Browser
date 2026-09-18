@@ -6,8 +6,8 @@ without installing dependencies.
 ## Run
 
 ```bash
-chmod +x Aurora-Browser-2.0.1-x86_64.AppImage
-./Aurora-Browser-2.0.1-x86_64.AppImage
+chmod +x Aurora-Browser-$(cat VERSION)-x86_64.AppImage
+./Aurora-Browser-$(cat VERSION)-x86_64.AppImage
 ```
 
 On some distros you may need to enable FUSE:
@@ -27,24 +27,24 @@ updated automatically on the next launch.
 CLI switches:
 
 ```bash
-./Aurora-Browser-2.0.1-x86_64.AppImage --aurora-help            # show options
-./Aurora-Browser-2.0.1-x86_64.AppImage --aurora-no-integrate    # run w/o registering
-./Aurora-Browser-2.0.1-x86_64.AppImage --aurora-uninstall       # remove menu entry + icon
+./Aurora-Browser-$(cat VERSION)-x86_64.AppImage --aurora-help            # show options
+./Aurora-Browser-$(cat VERSION)-x86_64.AppImage --aurora-no-integrate    # run w/o registering
+./Aurora-Browser-$(cat VERSION)-x86_64.AppImage --aurora-uninstall       # remove menu entry + icon
 ```
 
 ## Build from source
 
 ```bash
-VERSION=2.0.1 bash engine/build-appimage.sh
+VERSION=$(cat VERSION) bash engine/build-appimage.sh
 ```
 
 The script downloads `linuxdeploy` automatically on first run and produces:
 
 ```
-build/Aurora-Browser-2.0.1-x86_64.AppImage
+build/Aurora-Browser-$(cat VERSION)-x86_64.AppImage
 ```
 
 ## Notes
 
-- The engine is downloaded on first run into the profile directory.
-- Store the `.AppImage` anywhere; it carries its own launcher and updater.
+- The engine is compiled from source during the build process.
+- Store the `.AppImage` anywhere; it carries its own launcher.

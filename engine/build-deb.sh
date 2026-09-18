@@ -31,7 +31,11 @@ ICON="$ROOT/assets/icons/aurora.png"
 
 cat > "$STAGE/usr/local/bin/aurora-browser" <<'LAUNCH'
 #!/bin/bash
-DIR="$(dirname "$(readlink -f "$0")")"
+if command -v readlink >/dev/null 2>&1 && readlink -f / >/dev/null 2>&1; then
+  DIR="$(dirname "$(readlink -f "$0")")"
+else
+  DIR="$(cd "$(dirname "$0")" && pwd)"
+fi
 exec "$DIR/../opt/aurora-browser/ladybird" "$@"
 LAUNCH
 chmod +x "$STAGE/usr/local/bin/aurora-browser"
@@ -55,7 +59,7 @@ Section: web
 Priority: optional
 Architecture: amd64
 Depends: libgl1, libglu1-mesa, libpulse0, libssl3
-Maintainer: Aurora Browser <draftiermovie66@users.noreply.github.com>
+Maintainer: Aurora Browser Team <aurora-browser@users.noreply.github.com>
 Description: Aurora Browser - Custom open-source browser
  Aurora Browser is built on the Ladybird LibWeb engine.
  No Chromium. No Firefox. Custom open-source engine.

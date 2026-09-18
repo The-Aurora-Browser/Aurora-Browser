@@ -6,16 +6,16 @@ RHEL, CentOS, Rocky, and AlmaLinux.
 ## Install
 
 ```bash
-sudo dnf install aurora-browser-2.0.1-1.x86_64.rpm
+sudo dnf install aurora-browser-$(cat VERSION)-1.x86_64.rpm
 ```
 
 For RHEL/CentOS that use `yum`:
 
 ```bash
-sudo yum localinstall aurora-browser-2.0.1-1.x86_64.rpm
+sudo yum localinstall aurora-browser-$(cat VERSION)-1.x86_64.rpm
 ```
 
-The browser engine is downloaded automatically on first launch.
+The browser engine is compiled from source and included in the package.
 
 ## Build from source
 
@@ -23,21 +23,13 @@ Requires `rpm-build`:
 
 ```bash
 sudo dnf install rpm-build
-VERSION=2.0.1 bash engine/build-rpm.sh
+VERSION=$(cat VERSION) bash engine/build-rpm.sh
 ```
 
-Output: `build/aurora-browser-2.0.1-1.x86_64.rpm`
+Output: `build/aurora-browser-$(cat VERSION)-1.x86_64.rpm`
 
 ## Install build dependencies
 
 ```bash
-sudo dnf install rpm-build curl unzip
-```
-
-## Auto-updates
-
-The browser checks for updates once per day. To force:
-
-```bash
-sudo /opt/aurora-browser/update.sh
+sudo dnf install rpm-build
 ```

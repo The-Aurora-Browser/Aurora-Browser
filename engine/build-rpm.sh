@@ -53,7 +53,7 @@ Version:        ${VERSION}
 Release:        1%{?dist}
 Summary:        Custom open-source browser with LibWeb engine
 License:        MIT
-URL:            https://github.com/Draftiermovie66/Aurora-Browser
+URL:            https://github.com/The-Aurora-Browser/Aurora-Browser
 Source0:        aurora-browser-${VERSION}.tar.gz
 Requires:       glx-utils mesa-libGLU pulseaudio-libs openssl
 BuildArch:      x86_64

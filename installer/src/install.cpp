@@ -276,8 +276,8 @@ InstallResult runInstall(const EngineTarget &target, const QString &installDir,
         return result;
     }
     if (target.system == QLatin1String("macos")) {
-        const QString app = engineSrc + QLatin1String("/Google Chrome for Testing.app");
-        if (!QFile::exists(app) && !QFile::exists(engineSrc + QLatin1String("/chrome"))) {
+        const QString app = engineSrc + QLatin1String("/Aurora Browser.app");
+        if (!QFile::exists(app)) {
             result.error = QStringLiteral("Engine binary not found in the archive.");
             return result;
         }

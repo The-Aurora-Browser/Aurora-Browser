@@ -309,57 +309,44 @@ jobs:
 
       - name: Create Windows package
         run: |
+          set -euo pipefail
           VERSION=${{ needs.check-version.outputs.version }}
-          mkdir -p build/aurora-browser-${VERSION}-windows
+          WIN_DIR="build/aurora-browser-${VERSION}-windows"
+          mkdir -p "$WIN_DIR"
 
-          cat > build/aurora-browser-${VERSION}-windows/aurora-browser.bat <<'BAT'
-          @echo off
-          set DIR=%~dp0
-          if exist "%DIR%ladybird.exe" (
-              start "" "%DIR%ladybird.exe" %*
-          ) else if exist "%DIR%ladybird" (
-              echo Run inside WSL2: ./ladybird
-              pause
-          ) else (
-              echo ERROR: ladybird not found in %DIR%
-              pause
-          )
-          BAT
+          # Copy icon
+          cp assets/icons/aurora.png "$WIN_DIR/aurora.png" 2>/dev/null || true
 
-          cat > build/aurora-browser-${VERSION}-windows/aurora-browser.ps1 <<'PS1'
-          $dir = Split-Path -Parent $MyInvocation.MyCommand.Path
-          $exe = Join-Path $dir "ladybird.exe"
-          if (Test-Path $exe) {
-              Start-Process -FilePath $exe -ArgumentList $args
-          } else {
-              Write-Host "ladybird.exe not found. Build with WSL2 first." -ForegroundColor Red
-              Read-Host "Press Enter to exit"
-          }
-          PS1
+          # Write .bat launcher (no leading spaces)
+          printf '@echo off\r\nset DIR=%%~dp0\r\nif exist "%%DIR%%ladybird.exe" (\r\n    start "" "%%DIR%%ladybird.exe" %%*\r\n) else if exist "%%DIR%%ladybird" (\r\n    echo Run inside WSL2: ./ladybird\r\n    pause\r\n) else (\r\n    echo ERROR: ladybird not found in %%DIR%%\r\n    pause\r\n)\r\n' > "$WIN_DIR/aurora-browser.bat"
 
-          cat > build/aurora-browser-${VERSION}-windows/README.txt <<EOF
-          Aurora Browser v${VERSION} for Windows
-          ======================================
+          # Write .ps1 launcher
+          printf '$dir = Split-Path -Parent $MyInvocation.MyCommand.Path\n$exe = Join-Path $dir "ladybird.exe"\nif (Test-Path $exe) {\n    Start-Process -FilePath $exe -ArgumentList $args\n} else {\n    Write-Host "ladybird.exe not found. Build with WSL2 first." -ForegroundColor Red\n    Read-Host "Press Enter to exit"\n}\n' > "$WIN_DIR/aurora-browser.ps1"
 
-          Built on the Ladybird LibWeb engine.
-          No Chromium. No Firefox. Custom open-source engine.
+          # Write README using printf to avoid heredoc indentation issues
+          {
+            printf 'Aurora Browser v%s for Windows\n' "$VERSION"
+            printf '%s\n' "======================================"
+            printf '\n'
+            printf 'Built on the Ladybird LibWeb engine.\n'
+            printf 'No Chromium. No Firefox. Custom open-source engine.\n'
+            printf '\n'
+            printf 'Installation:\n'
+            printf '  1. Extract this zip file\n'
+            printf '  2. Run aurora-browser.bat or aurora-browser.ps1\n'
+            printf '\n'
+            printf 'Building from source on Windows:\n'
+            printf '  1. Install WSL2 with Ubuntu 24.04+\n'
+            printf '  2. git clone https://github.com/The-Aurora-Browser/Aurora-Browser\n'
+            printf '  3. cd Aurora-Browser\n'
+            printf '  4. bash engine/build.sh\n'
+            printf '  5. The binary will work natively on Windows\n'
+            printf '\n'
+            printf 'Engine: LibWeb (Ladybird) — BSD-2-Clause\n'
+            printf 'Browser: Aurora Browser — MIT\n'
+          } > "$WIN_DIR/README.txt"
 
-          Installation:
-            1. Extract this zip file
-            2. Run aurora-browser.bat or aurora-browser.ps1
-
-          Building from source on Windows:
-            1. Install WSL2 with Ubuntu 24.04+
-            2. git clone https://github.com/Draftiermovie66/Aurora-Browser
-            3. cd Aurora-Browser
-            4. VERSION=${VERSION} bash engine/build.sh
-            5. The binary will work natively on Windows
-
-          Engine: LibWeb (Ladybird) — BSD-2-Clause
-          Browser: Aurora Browser — MIT
-          EOF
-
-          cd build/aurora-browser-${VERSION}-windows
+          cd "$WIN_DIR"
           zip -r "../aurora-browser-${VERSION}-windows-x64.zip" .
           cd ../..
 
@@ -425,7 +412,7 @@ jobs:
 
             ### Build from source
             ```bash
-            git clone https://github.com/Draftiermovie66/Aurora-Browser
+            git clone https://github.com/The-Aurora-Browser/Aurora-Browser
             cd Aurora-Browser
             VERSION=${{ needs.check-version.outputs.version }} bash engine/build.sh
             ```

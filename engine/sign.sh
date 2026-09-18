@@ -39,7 +39,7 @@ sign_file() {
       -readpass /dev/stdin \
       -h sha256 \
       -n "Aurora Browser" \
-      -i "https://github.com/Draftiermovie66/Aurora-Browser" \
+      -i "https://github.com/The-Aurora-Browser/Aurora-Browser" \
       -t "$SIGN_TIMESTAMP" \
       -in "$file" \
       -out "$tmpout" 2>/dev/null

@@ -12,7 +12,6 @@ This guide defines coding, naming, and documentation conventions for Aurora Brow
 - [Git & Commits](#git--commits)
 - [Shell (`*.sh`)](#shell-sh)
 - [JavaScript / React (`extension/`)](#javascript--react-extension)
-- [C# (`windows/src/`)](#c-windows-src)
 - [Markdown & Docs](#markdown--docs)
 - [Packaging Conventions](#packaging-conventions)
 - [Formatting & Linting](#formatting--linting)
@@ -35,7 +34,7 @@ This guide defines coding, naming, and documentation conventions for Aurora Brow
 - **Conventional Commits** (enforced in review):
   ```
   feat(extension): add vimium-style shortcut hints
-  fix(linux): fallback when GitHub release lacks chrome-linux
+  fix(linux): handle missing build artifact gracefully
   docs(macos): clarify unsigned BETA first-launch
   chore(deps): bump framer-motion 11 → 13
   ```
@@ -54,7 +53,7 @@ All bash scripts (`engine/*.sh`, `scripts/build/build.sh`, `installer/build.sh`)
 #!/usr/bin/env bash
 set -euo pipefail
 DIR="$(cd "$(dirname "$0")" && pwd)"
-VERSION="${VERSION:-2.1.7}"
+VERSION="${VERSION:-$(cat VERSION)}"
 
 # Quote every variable, guard every cd
 # Prefer functions for non-trivial logic
@@ -68,7 +67,7 @@ VERSION="${VERSION:-2.1.7}"
 - **Validation:** Scripts must pass `bash -n <file>` (CI does this). Run `shellcheck` locally if available.
 - **No `cd` without guard:** `cd "$DIR" || exit 1` or use `DIR=...` pattern.
 - **Error messages:** Print to stderr: `echo "error: ... " >&2` and exit non-zero on real errors.
-- **Idempotency:** `update.sh` and `setup-sandbox.sh` should be safe to run twice.
+- **Idempotency:** Build and package scripts should be safe to run twice.
 - **Portability:** Target `bash` 4+. Don’t use `zsh`-only features.
 - **Secrets:** Never echo tokens, never commit `.env`.
 
@@ -76,13 +75,13 @@ VERSION="${VERSION:-2.1.7}"
 
 ```bash
 # Good
-update_engine() {
+build_engine() {
   local version="$1"
-  local asset="chrome-linux-${version}.zip"
-  echo "==> Fetching ${asset} ..."
-  curl -fsSL -o "/tmp/${asset}" "${BASE_URL}/${asset}" || {
-    echo "warn: ${asset} not found, falling back to snapshot" >&2
-    curl -fsSL -o "/tmp/${asset}" "${FALLBACK_URL}/latest.zip"
+  local asset="aurora-browser-${version}-linux-x86_64.tar.gz"
+  echo "==> Building ${asset} ..."
+  bash engine/build.sh || {
+    echo "error: build failed" >&2
+    exit 1
   }
 }
 ```
@@ -130,17 +129,6 @@ export default function ShortcutTile({ title, url, onRemove }) {
 
 ---
 
-## C# (`windows/src/`)
-
-File: `windows/src/AuroraBrowser.cs`
-
-- Target: .NET Framework / .NET 6+ compatible (check `build.ps1` — don’t bump target without updating the script).
-- Follow existing brace style (Allman) and `PascalCase` for classes/methods, `camelCase` for locals.
-- Keep launcher logic minimal: resolve paths, ensure `chrome-win/` + `profile/` exist, spawn Chromium with `--user-data-dir`.
-- Avoid hard-coded absolute paths — resolve relative to executable.
-
----
-
 ## Markdown & Docs
 
 - **Headings:** ATX (`#`, `##`) with blank line before/after. One `#` per file.
@@ -157,7 +145,7 @@ File: `windows/src/AuroraBrowser.cs`
 
 ## Packaging Conventions
 
-- **Versions:** Single source of truth is the `VERSION` file (currently `2.1.7`).
+- **Versions:** Single source of truth is the `VERSION` file.
 - **Artifacts:** Always output to `build/` (and deb copy at `aurora-browser_${V}_amd64.deb` for compatibility). Never commit artifacts (`*.deb`, `*.rpm`, `*.AppImage`, `*.dmg` are `.gitignore`d).
 - **Desktop entry:** `aurora-browser.desktop` must set `Exec=aurora-browser` and `Icon=aurora`.
 - **Engine scripts are the source of truth.** Package builders live in `engine/` — edit the source there.
@@ -196,12 +184,11 @@ Use this when reviewing or self-reviewing:
 - [ ] `bash -n` clean; `set -euo pipefail` + quoted vars in shell
 - [ ] `npm --prefix extension run build` passes; no new `manifest.json` permissions without justification
 - [ ] No secrets / tokens / absolute paths
-- [ ] `update.sh` / `update.ps1` still safe to re-run; fallback behavior preserved
-- [ ] Profile isolation intact (`--user-data-dir` self-contained)
+- [ ] Profile isolation intact
 - [ ] Docs updated (`README.md`, `packages/linux/README.md`, `SECURITY.md` if needed)
 - [ ] Screenshots for UI changes
 - [ ] Tested at least one package install that was touched
 
 ---
 
-Questions? Open a [Discussion](https://github.com/Draftiermovie66/Aurora-Browser/discussions) or ask in your PR.
+Questions? Open a [Discussion](https://github.com/The-Aurora-Browser/Aurora-Browser/discussions) or ask in your PR.

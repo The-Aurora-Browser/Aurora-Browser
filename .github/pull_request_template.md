@@ -37,7 +37,7 @@ Closes #
 # Example:
 npm --prefix extension install
 npm --prefix extension run build
-VERSION=2.1.3 bash engine/build-deb.sh
+VERSION=$(cat VERSION) bash engine/build-deb.sh
 # then install & launch artifact from build/
 ```
 
@@ -63,8 +63,7 @@ VERSION=2.1.3 bash engine/build-deb.sh
 - [ ] I updated docs (`README.md`, `linux/README.md`, `macos/README.md`, `windows/README.md`) if install/build behavior changed
 - [ ] `npm --prefix extension run build` passes (if `extension/` changed)
 - [ ] All `*.sh` changed pass `bash -n` (CI runs `lint-shell-scripts`)
-- [ ] I tested the package/target I changed (installed artifact or `npm run preview`)
-- [ ] `update.sh` / `update.ps1` still safe to re-run / fallback behavior preserved (if updater changed)
+- [ ] I tested the package I changed (installed artifact or `npm run preview`)
 - [ ] No secrets, credentials, or absolute local paths committed
 - [ ] No new `manifest.json` permissions without justification in description (+ SECURITY.md if needed)
 

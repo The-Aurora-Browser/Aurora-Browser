@@ -6,10 +6,10 @@ Aurora Browser is under active development. Only the latest release line receive
 
 | Version | Supported |
 |---|---|
-| `2.1.x` (latest `2.1.7`) | ✅ |
+| `2.1.x` (latest) | ✅ |
 | `< 2.1` | ❌ — please upgrade |
 
-We release patches for critical vulnerabilities as fast as possible (target: 7 days from report to fix or mitigation). Check [Releases](https://github.com/Draftiermovie66/Aurora-Browser/releases) for the latest version.
+We release patches for critical vulnerabilities as fast as possible (target: 7 days from report to fix or mitigation). Check [Releases](https://github.com/The-Aurora-Browser/Aurora-Browser/releases) for the latest version.
 
 ---
 
@@ -20,10 +20,10 @@ We release patches for critical vulnerabilities as fast as possible (target: 7 d
 ### How to Report
 
 1. **Preferred:** Open a **private Security Advisory** via GitHub:
-   - Go to [`Security` → `Report a vulnerability`](https://github.com/Draftiermovie66/Aurora-Browser/security/advisories/new) on this repo
+   - Go to [`Security` → `Report a vulnerability`](https://github.com/The-Aurora-Browser/Aurora-Browser/security/advisories/new) on this repo
 2. **Alternative:** Contact the maintainers directly:
-   - GitHub: [`@Draftiermovie66`](https://github.com/Draftiermovie66)
-   - Upstream: [`@Draftiermovie66`](https://github.com/Draftiermovie66) (original maintainer)
+   - GitHub: [`@The-Aurora-Browser`](https://github.com/The-Aurora-Browser)
+   - Upstream: [`@The-Aurora-Browser`](https://github.com/The-Aurora-Browser) (original maintainer)
 
 Include:
 
@@ -31,9 +31,9 @@ Include:
 - Description of the vulnerability and impact
 - Steps to reproduce (PoC if possible)
 - Whether the issue is in:
-  - the **browser packaging / updater** (`launch.sh`, `update.sh`, `update.ps1`, `setup-sandbox.sh`)
+  - the **browser build scripts** (`engine/build.sh`, `engine/brand.sh`, packaging scripts)
   - the **New Tab extension** (`extension/src/*`, `manifest.json`)
-  - the **Chromium engine** itself (we may need to defer to upstream Chromium)
+  - the **LibWeb engine** itself (we may need to defer to upstream Ladybird)
 - Your preferred contact for follow-up and disclosure credit
 
 ### What to Expect
@@ -49,11 +49,9 @@ We use CVSS 3.1 to prioritize. Critical/High issues (remote code execution, sand
 
 ## Security Considerations for Users & Contributors
 
-### Updater & Engine Downloads
+### Engine Build
 
-- `engine/build.sh` and related scripts handle engine downloads and updates. **Verify** you are running the latest release before reporting an updater issue.
-- Do not run `update.sh` with untrusted `update.conf` — it controls the source repo and asset names.
-- On Linux, re-run `setup-sandbox.sh` after manual engine updates if you hit sandbox errors — incorrect sandbox perms weaken the Chromium sandbox.
+- `engine/build.sh` and related scripts handle engine compilation from source. **Verify** you are running the latest release before reporting a build issue.
 
 ### Profile Isolation
 
@@ -76,14 +74,13 @@ We use CVSS 3.1 to prioritize. Critical/High issues (remote code execution, sand
 **In scope:**
 
 - Remote code execution via packaged scripts or extension
-- Sandbox escape / privilege escalation via `setup-sandbox.sh` or `launch.sh`
-- Arbitrary file write or update hijacking (`update.sh` / `update.ps1`)
+- Arbitrary file write via build or packaging scripts
 - Data exfiltration via the New Tab extension
 
 **Out of scope (unless chainable):**
 
 - Social engineering, physical access
-- Vulnerabilities in the upstream Chromium engine itself — report those to the [Chromium security team](https://www.chromium.org/Home/chromium-security/reporting-security-bugs/) and link the Chromium advisory in your Aurora report
+- Vulnerabilities in the upstream LibWeb engine itself — report those to the [Ladybird project](https://github.com/LadybirdBrowser/ladybird/issues) and link the advisory in your Aurora report
 
 ---
 
@@ -101,15 +98,7 @@ If you have already disclosed publicly, please still report — we’ll prioriti
 
 ## Security Updates
 
-- Watch releases: [GitHub Releases](https://github.com/Draftiermovie66/Aurora-Browser/releases) → **Watch → Custom → Releases**
-- Update promptly:
-  ```bash
-  # Linux
-  sudo /opt/aurora-browser/update.sh
-  # macOS
-  /Applications/Aurora\ Browser.app/Contents/Resources/update.sh
-  # Windows
-  .\update.ps1
-  ```
+- Watch releases: [GitHub Releases](https://github.com/The-Aurora-Browser/Aurora-Browser/releases) → **Watch → Custom → Releases**
+- Update by downloading the latest release from GitHub
 
 Thank you for helping keep Aurora Browser and its users safe!

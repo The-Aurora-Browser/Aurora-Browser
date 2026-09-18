@@ -13,11 +13,10 @@ else()
   set(QT_MAJOR 6)
 endif()
 
-set(Qt IGNORED)
 if (QT_MAJOR EQUAL 6)
-  set(Qt Qt6)
+  set(QT_PREFIX Qt6)
 else()
-  set(Qt Qt5)
+  set(QT_PREFIX Qt5)
 endif()
 
 qt_add_executable(aurora-installer
@@ -35,7 +34,5 @@ set_target_properties(aurora-installer PROPERTIES
 
 target_include_directories(aurora-installer PRIVATE src)
 target_link_libraries(aurora-installer
-  PRIVATE ${Qt}::Widgets ${Qt}::Network
+  PRIVATE ${QT_PREFIX}::Widgets ${QT_PREFIX}::Network
 )
-
-unset(Qt)

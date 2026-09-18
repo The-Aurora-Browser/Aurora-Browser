@@ -29,7 +29,12 @@ ICON="$ROOT/assets/icons/aurora.png"
 
 cat > "$APPDIR/usr/bin/aurora-browser" <<'WRAP'
 #!/bin/bash
-DIR="$(dirname "$(readlink -f "$0")")"
+# Portable: works on Linux and macOS
+if command -v readlink >/dev/null 2>&1 && readlink -f / >/dev/null 2>&1; then
+  DIR="$(dirname "$(readlink -f "$0")")"
+else
+  DIR="$(cd "$(dirname "$0")" && pwd)"
+fi
 LIB="$DIR/../lib/aurora-browser"
 exec "$LIB/ladybird" "$@"
 WRAP
@@ -50,7 +55,11 @@ cp "$APPDIR/usr/share/applications/aurora-browser.desktop" "$APPDIR/aurora-brows
 
 cat > "$APPDIR/AppRun" <<'APPRUN'
 #!/bin/bash
-SELF="$(readlink -f "$0")"
+if command -v readlink >/dev/null 2>&1 && readlink -f / >/dev/null 2>&1; then
+  SELF="$(readlink -f "$0")"
+else
+  SELF="$(cd "$(dirname "$0")" && pwd)/$(basename "$0")"
+fi
 DIR="$(dirname "$SELF")"
 exec "$DIR/usr/bin/aurora-browser" "$@"
 APPRUN

@@ -53,7 +53,7 @@ This package contains the Aurora Browser engine for Windows.
 
 Option 1: Build from source (recommended)
   1. Install WSL2 with Ubuntu 24.04+
-  2. Clone: git clone https://github.com/Draftiermovie66/Aurora-Browser
+  2. Clone: git clone https://github.com/The-Aurora-Browser/Aurora-Browser
   3. Build: VERSION=${VERSION} bash engine/build.sh
   4. The binary will work natively on Windows
 

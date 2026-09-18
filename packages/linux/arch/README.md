@@ -9,7 +9,7 @@ yay -S aurora-browser
 ## Build locally
 
 ```bash
-cd linux/arch
+cd packages/linux/arch
 makepkg -si
 ```
 
@@ -17,11 +17,10 @@ makepkg -si
 
 ```bash
 # First build the .deb
-cd ../..
-VERSION=2.0.0 bash linux/build.sh
+VERSION=$(cat VERSION) bash engine/build-deb.sh
 
 # Then build the Arch package
-cd linux/arch
+cd packages/linux/arch
 makepkg -si
 ```
 
@@ -31,6 +30,6 @@ Arch Linux can install .deb packages directly using `debtap`:
 
 ```bash
 yay -S debtap
-debtap aurora-browser_2.0.0_amd64.deb
-sudo pacman -U aurora-browser-2.0.0-1-x86_64.pkg.tar.zst
+debtap aurora-browser_$(cat VERSION)_amd64.deb
+sudo pacman -U aurora-browser-$(cat VERSION)-1-x86_64.pkg.tar.zst
 ```

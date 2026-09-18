@@ -2,7 +2,7 @@
 
 Thank you for considering a contribution to Aurora Browser! This guide will help you get set up, follow our workflow, and get your pull request merged quickly.
 
-> **New to open source?** Look for issues labeled [`good first issue`](https://github.com/Draftiermovie66/Aurora-Browser/labels/good%20first%20issue) and [`help wanted`](https://github.com/Draftiermovie66/Aurora-Browser/labels/help%20wanted).
+> **New to open source?** Look for issues labeled [`good first issue`](https://github.com/The-Aurora-Browser/Aurora-Browser/labels/good%20first%20issue) and [`help wanted`](https://github.com/The-Aurora-Browser/Aurora-Browser/labels/help%20wanted).
 
 ---
 
@@ -56,7 +56,7 @@ This project adheres to the [Contributor Covenant Code of Conduct](CODE_OF_CONDU
 ### Clone & Install
 
 ```bash
-git clone https://github.com/Draftiermovie66/Aurora-Browser.git
+git clone https://github.com/The-Aurora-Browser/Aurora-Browser.git
 cd Aurora-Browser
 
 # Install extension deps and build
@@ -86,9 +86,9 @@ npm run preview  # Preview dist/ locally
 ### Build a Package Locally
 
 ```bash
-VERSION=2.1.7 bash engine/build-deb.sh     # .deb
-VERSION=2.1.7 bash engine/build-rpm.sh     # .rpm
-VERSION=2.1.7 bash engine/build-appimage.sh # .AppImage
+VERSION=$(cat VERSION) bash engine/build-deb.sh     # .deb
+VERSION=$(cat VERSION) bash engine/build-rpm.sh     # .rpm
+VERSION=$(cat VERSION) bash engine/build-appimage.sh # .AppImage
 
 # Orchestrator shorthand
 bash scripts/build/build.sh linux
@@ -167,7 +167,7 @@ We follow **Conventional Commits**:
 
 ```
 feat(extension): add keyboard shortcut palette
-fix(linux): handle missing chrome-linux asset without aborting
+fix(linux): handle missing build artifact without aborting
 docs(readme): add AppImage troubleshooting
 chore(deps): bump vite to 6.0.1
 ```
@@ -182,7 +182,7 @@ chore(deps): bump vite to 6.0.1
 
 Before opening a PR:
 
-- [ ] Search existing [issues](https://github.com/Draftiermovie66/Aurora-Browser/issues) and [PRs](https://github.com/Draftiermovie66/Aurora-Browser/pulls) to avoid duplication.
+- [ ] Search existing [issues](https://github.com/The-Aurora-Browser/Aurora-Browser/issues) and [PRs](https://github.com/The-Aurora-Browser/Aurora-Browser/pulls) to avoid duplication.
 - [ ] Create an issue for large changes and discuss the approach first.
 - [ ] Run local checks:
   ```bash
@@ -219,8 +219,7 @@ Full details: [STYLEGUIDE.md](STYLEGUIDE.md)
 **TL;DR:**
 
 - **Shell** — `set -euo pipefail`, `bash -n` clean, quote variables
-- **JavaScript/React** — Vite + React 18, Framer Motion for animations, keep components small
-- **C# (Windows)** — follow existing `windows/src/AuroraBrowser.cs` style
+- **JavaScript/React** — Vite + React 19, Framer Motion for animations, keep components small
 - **Markdown** — wrap lines sensibly, use fenced code blocks with language tags
 
 Run `npx --prefix extension vite build` and `bash -n` before pushing.
@@ -252,7 +251,7 @@ Releases are cut via GitHub Actions and GitHub Releases (maintainers only):
 bash scripts/build/build.sh linux
 
 # Create a release (requires gh auth + push rights)
-gh release create v2.1.7 --title "Aurora Browser v2.1.7" --notes "..." build/*
+gh release create v$(cat VERSION) --title "Aurora Browser v$(cat VERSION)" --notes "..." build/*
 ```
 
 See `.github/workflows/release.yml` and `release-drafter.yml` for automation.
@@ -261,7 +260,7 @@ See `.github/workflows/release.yml` and `release-drafter.yml` for automation.
 
 ## Getting Help
 
-- **Questions / discussion:** Open a [GitHub Discussion](https://github.com/Draftiermovie66/Aurora-Browser/discussions) or comment on a relevant issue.
+- **Questions / discussion:** Open a [GitHub Discussion](https://github.com/The-Aurora-Browser/Aurora-Browser/discussions) or comment on a relevant issue.
 - **Bugs:** Use the *Bug report* template with platform/version/repro.
 - **Security:** See [SECURITY.md](SECURITY.md) — do not open public issues for vulnerabilities.
 

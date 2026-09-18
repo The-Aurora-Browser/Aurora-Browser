@@ -27,7 +27,7 @@ Aurora Browser
 ├── installer/                # Legacy native installer (deprecated)
 ├── scripts/build/            # Build orchestrator
 │   └── build.sh
-├── VERSION                   # Single source of truth: 3.0.0
+├── VERSION                   # Single source of truth
 ├── LICENSE                   # MIT
 └── README.md
 ```
@@ -46,18 +46,14 @@ Aurora Browser
 ### Build
 
 ```bash
-git clone --recursive https://github.com/Draftiermovie66/Aurora-Browser
+git clone https://github.com/The-Aurora-Browser/Aurora-Browser
 cd Aurora-Browser
 
-# Linux
-VERSION=3.0.0 bash engine/build.sh
-
-# macOS
-VERSION=3.0.0 bash engine/build.sh
-
-# Windows (inside WSL2)
-VERSION=3.0.0 bash engine/build.sh
+# Linux / macOS / Windows (WSL2)
+bash engine/build.sh
 ```
+
+The VERSION is read automatically from the `VERSION` file. To override:
 ---
 
 ### Build Steps
@@ -79,7 +75,7 @@ export AURORA_SIGN_CERT=/path/to/certificate.pfx
 export AURORA_SIGN_PASS=your-password
 
 # Sign all binaries
-VERSION=3.0.0 bash engine/sign.sh build VERSION
+bash engine/sign.sh build VERSION
 ```
 
 ---

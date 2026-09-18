@@ -64,6 +64,14 @@ LAUNCH
       perl -pi -e 's|(CFBundleName</key>\s*<string>)([^<]*)(</string>)|$1Aurora Browser$3|g' "$PLIST"
       echo "  Info.plist patched: Aurora Browser"
     fi
+
+    # Create command-line launcher script
+    cat > "$INSTALL_DIR/aurora-browser" <<'LAUNCH'
+#!/bin/bash
+DIR="$(cd "$(dirname "$0")" && pwd)"
+exec "open" "-a" "$DIR/Aurora Browser.app" --args "$@"
+LAUNCH
+    chmod +x "$INSTALL_DIR/aurora-browser"
     ;;
 
   MINGW*|MSYS*|CYGWIN*)

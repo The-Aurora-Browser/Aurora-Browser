@@ -55,7 +55,7 @@ case "$(uname -s)" in
     ;;
   MINGW*|MSYS*|CYGWIN*)
     echo "ERROR: Windows native build is not supported."
-    echo "Please build using WSL2. See: https://docs ladybird.org/building"
+    echo "Please build using WSL2. See: https://docs.ladybird.org/building"
     exit 1
     ;;
   *)

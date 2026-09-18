@@ -140,9 +140,9 @@ export default function SettingsPage({
                 A fast, private, auto-updating browser built on the LibWeb engine.
               </p>
               <div className="about-links">
-                <a href="https://github.com/Draftiermovie66/Aurora-Browser/releases" target="_blank">Releases</a>
-                <a href="https://github.com/Draftiermovie66/Aurora-Browser/issues" target="_blank">Report an issue</a>
-                <a href="https://github.com/Draftiermovie66/Aurora-Browser" target="_blank">Source code</a>
+                <a href="https://github.com/The-Aurora-Browser/Aurora-Browser/releases" target="_blank">Releases</a>
+                <a href="https://github.com/The-Aurora-Browser/Aurora-Browser/issues" target="_blank">Report an issue</a>
+                <a href="https://github.com/The-Aurora-Browser/Aurora-Browser" target="_blank">Source code</a>
               </div>
             </div>
           )}

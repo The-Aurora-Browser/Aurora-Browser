@@ -15,8 +15,8 @@
 #include <QTemporaryDir>
 #include <QRegularExpression>
 
-const char *kUserAgent = "AuroraBrowser-Installer/3.0";
-const char *kRepo = "Draftiermovie66/Aurora-Browser";
+const char *kUserAgent = "AuroraBrowser-Installer/2.1";
+const char *kRepo = "The-Aurora-Browser/Aurora-Browser";
 
 bool looksLikeWindows() {
 #ifdef Q_OS_WIN
