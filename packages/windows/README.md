@@ -1,54 +1,48 @@
 # Aurora Browser for Windows
 
+> **Status: BETA** — Windows support is experimental. The engine is built for
+> Linux/macOS; native Windows builds are not yet supported. Use at your own risk.
+
 ## Quick Start
 
-1. **Download Engine** — Run `update.ps1` in PowerShell to automatically download the latest Aurora engine snapshot.
-
-2. **Launch** — Double-click `aurora-browser.exe` to start Aurora Browser.
-
-3. **Auto-update** — `update.ps1` checks GitHub releases (and falls back to engine snapshots). Run it manually or via a scheduled task.
-
-## Manual Setup
-
-1. Download `chrome-win.zip` from [engine snapshots](https://commondatastorage.googleapis.com/chromium-browser-snapshots/index.html?prefix=Win_x64/)
-2. Extract `chrome-win/` into the same directory as `aurora-browser.exe`
-3. Run `aurora-browser.exe`
+1. **Download** the latest `aurora-browser-{version}-windows-x64.zip` from [GitHub Releases](https://github.com/The-Aurora-Browser/Aurora-Browser/releases).
+2. **Extract** the zip to a folder of your choice.
+3. **Launch** — double-click `aurora-browser.bat` (or run `aurora-browser.ps1` in PowerShell).
 
 ## Directory Structure
 
 ```
 aurora-browser/
-  chrome-win/           # Engine (downloaded via update.ps1)
-  chrome-win.old/       # Backup from last update
-  aurora-browser.exe    # Launcher (compiled from C# source)
-  extension/            # Custom new tab page
-  profile/              # User data (cookies, history, etc.)
-  update.ps1            # Update script
-  version.txt           # Current version tracking
-```
-
-## Building the Launcher
-
-The `.exe` launcher is compiled from `src/AuroraBrowser.cs` during the build process. To recompile manually:
-
-```powershell
-csc.exe /nologo /out:aurora-browser.exe /target:winexe src\AuroraBrowser.cs
-```
-
-## Scheduled Auto-Updates
-
-To check for updates daily, create a scheduled task:
-
-```powershell
-$action = New-ScheduledTaskAction -Execute "powershell.exe" -Argument "-NoProfile -File `"$env:USERPROFILE\aurora-browser\update.ps1`" --quiet"
-$trigger = New-ScheduledTaskTrigger -Daily -At 10am
-Register-ScheduledTask -TaskName "Aurora Browser Update" -Action $action -Trigger $trigger
+  ladybird.exe          # Engine (present if built natively)
+  ladybird              # Engine (Linux binary, run inside WSL2)
+  aurora-browser.bat    # Launcher (batch)
+  aurora-browser.ps1    # Launcher (PowerShell)
+  README.txt            # Package notes
 ```
 
 ## Building from Source
 
-Run `build.ps1` to create a distributable package:
+Native Windows builds are not yet supported. Build inside **WSL2 with Ubuntu 24.04+**:
 
-```powershell
-.\windows\build.ps1 -version "1.1.1"
+```bash
+git clone https://github.com/The-Aurora-Browser/Aurora-Browser
+cd Aurora-Browser
+bash engine/build.sh
 ```
+
+The built binary works natively on Windows. To create the distributable zip:
+
+```bash
+bash engine/build-exe.sh build/ladybird build 2.1.7
+```
+
+Output: `build/aurora-browser-2.1.7-windows-x64.zip`
+
+The release workflow (GitHub Actions) also produces the Windows zip automatically.
+
+## Notes
+
+- The engine is LibWeb (Ladybird), compiled from source — not Chromium.
+- The `.bat`/`.ps1` launchers start `ladybird.exe` if present, otherwise they
+  point you to the WSL2 build instructions.
+- There is no auto-updater yet — download new releases from GitHub Releases.

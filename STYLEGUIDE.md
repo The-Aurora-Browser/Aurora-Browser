@@ -12,7 +12,7 @@ This guide defines coding, naming, and documentation conventions for Aurora Brow
 - [Git & Commits](#git--commits)
 - [Shell (`*.sh`)](#shell-sh)
 - [JavaScript / React (`extension/`)](#javascript--react-extension)
-- [C# (`windows/src/`)](#c-windows-src)
+- [C++ (`installer/src/`)](#c-installer-src)
 - [Markdown & Docs](#markdown--docs)
 - [Packaging Conventions](#packaging-conventions)
 - [Formatting & Linting](#formatting--linting)
@@ -23,9 +23,8 @@ This guide defines coding, naming, and documentation conventions for Aurora Brow
 ## General Principles
 
 1. **Fail safe** — Build and install scripts must never brick the install. Log errors clearly, provide fallbacks where possible.
-2. **Profile isolation** — Never write outside the self-contained profile unless explicitly required. Document any exception.
-3. **Small PRs** — Prefer <400 lines. Split refactor + feat into separate commits/PRs.
-4. **Docs accompany code** — If you change install or build steps, update `README.md` and platform READMEs in the same PR.
+2. **Small PRs** — Prefer <400 lines. Split refactor + feat into separate commits/PRs.
+3. **Docs accompany code** — If you change install or build steps, update `README.md` and platform READMEs in the same PR.
 
 ---
 
@@ -35,7 +34,7 @@ This guide defines coding, naming, and documentation conventions for Aurora Brow
 - **Conventional Commits** (enforced in review):
   ```
   feat(extension): add vimium-style shortcut hints
-  fix(linux): fallback when GitHub release lacks chrome-linux
+  fix(linux): fallback when ladybird binary is missing
   docs(macos): clarify unsigned BETA first-launch
   chore(deps): bump framer-motion 11 → 13
   ```
@@ -68,7 +67,7 @@ VERSION="${VERSION:-2.1.7}"
 - **Validation:** Scripts must pass `bash -n <file>` (CI does this). Run `shellcheck` locally if available.
 - **No `cd` without guard:** `cd "$DIR" || exit 1` or use `DIR=...` pattern.
 - **Error messages:** Print to stderr: `echo "error: ... " >&2` and exit non-zero on real errors.
-- **Idempotency:** `update.sh` and `setup-sandbox.sh` should be safe to run twice.
+- **Idempotency:** Build and packaging scripts should be safe to run twice.
 - **Portability:** Target `bash` 4+. Don’t use `zsh`-only features.
 - **Secrets:** Never echo tokens, never commit `.env`.
 
@@ -76,14 +75,15 @@ VERSION="${VERSION:-2.1.7}"
 
 ```bash
 # Good
-update_engine() {
-  local version="$1"
-  local asset="chrome-linux-${version}.zip"
-  echo "==> Fetching ${asset} ..."
-  curl -fsSL -o "/tmp/${asset}" "${BASE_URL}/${asset}" || {
-    echo "warn: ${asset} not found, falling back to snapshot" >&2
-    curl -fsSL -o "/tmp/${asset}" "${FALLBACK_URL}/latest.zip"
-  }
+find_ladybird_binary() {
+  local build_dir="$1"
+  local bin
+  bin=$(find "$build_dir" -name "ladybird" -type f -executable 2>/dev/null | head -n1)
+  if [ -z "$bin" ]; then
+    echo "error: ladybird binary not found in $build_dir" >&2
+    exit 1
+  fi
+  echo "$bin"
 }
 ```
 
@@ -130,14 +130,14 @@ export default function ShortcutTile({ title, url, onRemove }) {
 
 ---
 
-## C# (`windows/src/`)
+## C++ (`installer/src/`)
 
-File: `windows/src/AuroraBrowser.cs`
+Files: `installer/src/*.cpp`, `installer/src/*.h`
 
-- Target: .NET Framework / .NET 6+ compatible (check `build.ps1` — don’t bump target without updating the script).
+- Target: C++17, Qt 5 or Qt 6 (`installer/CMakeLists.txt` auto-detects).
 - Follow existing brace style (Allman) and `PascalCase` for classes/methods, `camelCase` for locals.
-- Keep launcher logic minimal: resolve paths, ensure `chrome-win/` + `profile/` exist, spawn Chromium with `--user-data-dir`.
-- Avoid hard-coded absolute paths — resolve relative to executable.
+- Keep installer logic minimal: extract the embedded payload, locate the engine, launch it.
+- Avoid hard-coded absolute paths — resolve relative to the executable.
 
 ---
 
@@ -151,17 +151,18 @@ File: `windows/src/AuroraBrowser.cs`
 - **Terminology:** Consistent:
   - Product: **Aurora Browser** (capitalized)
   - Engine: **LibWeb engine** (Ladybird)
-  - Packages: `.deb`, `.rpm`, `PKGBUILD`, `.AppImage`, `.dmg`, `.exe`
+  - Packages: `.deb`, `.rpm`, `PKGBUILD`, `.AppImage`, `.dmg`, Windows zip
 
 ---
 
 ## Packaging Conventions
 
 - **Versions:** Single source of truth is the `VERSION` file (currently `2.1.7`).
-- **Artifacts:** Always output to `build/` (and deb copy at `aurora-browser_${V}_amd64.deb` for compatibility). Never commit artifacts (`*.deb`, `*.rpm`, `*.AppImage`, `*.dmg` are `.gitignore`d).
-- **Desktop entry:** `aurora-browser.desktop` must set `Exec=aurora-browser` and `Icon=aurora`.
+- **Artifacts:** Always output to `build/` (and deb copy at `aurora-browser_${V}_amd64.deb` for compatibility). Never commit artifacts (`*.deb`, `*.rpm`, `*.AppImage`, `*.dmg`, `*.zip` are `.gitignore`d).
+- **Desktop entry:** `aurora-browser.desktop` must set `Exec=aurora-browser` and `Icon=aurora-browser`.
 - **Engine scripts are the source of truth.** Package builders live in `engine/` — edit the source there.
-- **macOS:** Keep `entitlements.plist` minimal; note BETA unsigned status in `macos/README.md`.
+- **Package builders** take three positional arguments: `<ladybird-build-dir> <output-dir> <version>`.
+- **macOS:** The release workflow ad-hoc signs the `.app` bundle; note BETA unsigned/not-notarized status in `macos/README.md`.
 
 ---
 
@@ -172,7 +173,7 @@ Run before every PR:
 ```bash
 # Shell — must pass
 bash -n scripts/build/build.sh
-for f in engine/build.sh engine/brand.sh engine/build-deb.sh engine/build-rpm.sh engine/build-appimage.sh engine/build-exe.sh installer/build.sh; do
+for f in engine/*.sh installer/build.sh; do
   bash -n "$f" && echo "OK $f"
 done
 
@@ -196,12 +197,11 @@ Use this when reviewing or self-reviewing:
 - [ ] `bash -n` clean; `set -euo pipefail` + quoted vars in shell
 - [ ] `npm --prefix extension run build` passes; no new `manifest.json` permissions without justification
 - [ ] No secrets / tokens / absolute paths
-- [ ] `update.sh` / `update.ps1` still safe to re-run; fallback behavior preserved
-- [ ] Profile isolation intact (`--user-data-dir` self-contained)
+- [ ] Build and packaging scripts still safe to re-run; fallback behavior preserved
 - [ ] Docs updated (`README.md`, `packages/linux/README.md`, `SECURITY.md` if needed)
 - [ ] Screenshots for UI changes
 - [ ] Tested at least one package install that was touched
 
 ---
 
-Questions? Open a [Discussion](https://github.com/Draftiermovie66/Aurora-Browser/discussions) or ask in your PR.
+Questions? Open a [Discussion](https://github.com/The-Aurora-Browser/Aurora-Browser/discussions) or ask in your PR.

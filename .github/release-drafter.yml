@@ -34,4 +34,4 @@ template: |
 
   $CHANGES
 
-  **Full Changelog**: https://github.com/Draftiermovie66/Aurora-Browser/compare/$PREVIOUS_TAG...$RESOLVED_TAG
+  **Full Changelog**: https://github.com/The-Aurora-Browser/Aurora-Browser/compare/$PREVIOUS_TAG...$RESOLVED_TAG

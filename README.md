@@ -14,20 +14,25 @@
 
 ```
 Aurora Browser
-├── engine/                    # Ladybird fork build system
-│   ├── build.sh              # Main build script (clone + brand + build)
+├── engine/                    # Build system for the Ladybird engine
+│   ├── build.sh              # Main build script (clone + brand + build + package)
 │   ├── brand.sh              # Apply Aurora branding to Ladybird source
 │   ├── package.sh            # Package built binaries for distribution
+│   ├── build-deb.sh          # Build .deb package
+│   ├── build-rpm.sh          # Build .rpm package
+│   ├── build-appimage.sh     # Build .AppImage
+│   ├── build-exe.sh          # Build Windows package
 │   ├── sign.sh               # Code signing (osslsigncode / signtool)
 │   ├── checksums.sh          # SHA256 checksum generation
-│   └── newtab/               # Custom new-tab page
+│   └── newtab/               # Static new-tab page
 │       └── index.html
-├── extension/                # Legacy React new-tab (deprecated, kept for reference)
-├── packages/                 # Legacy packaging (deprecated)
-├── installer/                # Legacy native installer (deprecated)
+├── extension/                # React new-tab page (Vite, Manifest V3)
+├── installer/                # Native Qt C++ installer
+├── packages/                 # Platform READMEs (debian, redhat, arch, appimage, macos, windows)
 ├── scripts/build/            # Build orchestrator
 │   └── build.sh
-├── VERSION                   # Single source of truth: 3.0.0
+├── assets/icons/             # Aurora icons
+├── VERSION                   # Single source of truth: 2.1.7
 ├── LICENSE                   # MIT
 └── README.md
 ```
@@ -46,20 +51,34 @@ Aurora Browser
 ### Build
 
 ```bash
-git clone --recursive https://github.com/Draftiermovie66/Aurora-Browser
+git clone https://github.com/The-Aurora-Browser/Aurora-Browser
 cd Aurora-Browser
 
 # Linux
-VERSION=3.0.0 bash engine/build.sh
+bash engine/build.sh
 
 # macOS
-VERSION=3.0.0 bash engine/build.sh
+bash engine/build.sh
 
 # Windows (inside WSL2)
-VERSION=3.0.0 bash engine/build.sh
+bash engine/build.sh
 ```
----
 
+The version is read from the `VERSION` file automatically. To override:
+
+```bash
+VERSION=2.1.7 bash engine/build.sh
+```
+
+Or use the build orchestrator:
+
+```bash
+bash scripts/build/build.sh linux      # Linux
+bash scripts/build/build.sh macos      # macOS (must run on macOS)
+bash scripts/build/build.sh windows    # Windows (prints WSL2 instructions)
+```
+
+---
 ### Build Steps
 
 1. **Clone** — Downloads Ladybird source (`git clone --depth 1`)
@@ -78,8 +97,8 @@ Aurora Browser uses [osslsigncode](https://github.com/mtrojnar/osslsigncode) for
 export AURORA_SIGN_CERT=/path/to/certificate.pfx
 export AURORA_SIGN_PASS=your-password
 
-# Sign all binaries
-VERSION=3.0.0 bash engine/sign.sh build VERSION
+# Sign all binaries in build/ (target dir + version are optional)
+bash engine/sign.sh build 2.1.7
 ```
 
 ---

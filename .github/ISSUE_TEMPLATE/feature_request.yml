@@ -16,7 +16,7 @@ body:
       options:
         - New tab page (React extension)
         - Packaging / installers (deb, rpm, arch, appimage)
-        - Auto-update engine
+        - Engine build scripts
         - Windows launcher
         - macOS BETA
         - Other

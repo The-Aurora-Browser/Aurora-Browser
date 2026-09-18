@@ -27,8 +27,8 @@ body:
     id: version
     attributes:
       label: Version
-      description: Aurora version (e.g. v2.0.2)
-      placeholder: "v2.0.2"
+      description: Aurora version (e.g. v2.1.7)
+      placeholder: "v2.1.7"
     validations:
       required: true
   - type: textarea

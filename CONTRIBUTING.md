@@ -2,7 +2,7 @@
 
 Thank you for considering a contribution to Aurora Browser! This guide will help you get set up, follow our workflow, and get your pull request merged quickly.
 
-> **New to open source?** Look for issues labeled [`good first issue`](https://github.com/Draftiermovie66/Aurora-Browser/labels/good%20first%20issue) and [`help wanted`](https://github.com/Draftiermovie66/Aurora-Browser/labels/help%20wanted).
+> **New to open source?** Look for issues labeled [`good first issue`](https://github.com/The-Aurora-Browser/Aurora-Browser/labels/good%20first%20issue) and [`help wanted`](https://github.com/The-Aurora-Browser/Aurora-Browser/labels/help%20wanted).
 
 ---
 
@@ -33,8 +33,8 @@ This project adheres to the [Contributor Covenant Code of Conduct](CODE_OF_CONDU
 - **Report bugs** — Use the *Bug report* issue template; include platform, version, repro steps, and logs/screenshots.
 - **Request features** — Use the *Feature request* template; describe the use case and alternatives.
 - **Fix bugs / implement features** — Comment on an issue to claim it, then open a PR (see below).
-- **Improve packaging** — `packages/linux/*`, `packages/macos/`, `packages/windows/` all welcome platform-specific expertise.
-- **Improve docs** — README, wiki, comments, and examples.
+- **Improve packaging** — `engine/build-deb.sh`, `engine/build-rpm.sh`, `engine/build-appimage.sh`, `engine/build-exe.sh`, and `installer/` all welcome platform-specific expertise.
+- **Improve docs** — README, platform READMEs, comments, and examples.
 - **Review PRs** — Helpful reviews are a contribution!
 
 ---
@@ -45,18 +45,18 @@ This project adheres to the [Contributor Covenant Code of Conduct](CODE_OF_CONDU
 
 | Tool | Version | Notes |
 |---|---|---|
-| Node.js | 20+ | Extension build (`extension/`) |
-| npm | 9+ | Installed with Node |
+| Node.js | 20.19+ / 22.12+ | Extension build (`extension/`) |
+| npm | 10+ | Installed with Node |
 | bash | 4+ | Shell scripts |
 | git | 2.30+ | Version control |
-| PowerShell | 5+ | Windows build only |
-| Xcode CLI Tools | — | macOS `.dmg` only |
+| Clang / CMake / Ninja / Qt6 / Rust | — | Ladybird engine build (Linux/macOS) |
+| Xcode CLI Tools | — | macOS build only |
 | `gh` CLI | — | Release automation only |
 
 ### Clone & Install
 
 ```bash
-git clone https://github.com/Draftiermovie66/Aurora-Browser.git
+git clone https://github.com/The-Aurora-Browser/Aurora-Browser.git
 cd Aurora-Browser
 
 # Install extension deps and build
@@ -67,10 +67,14 @@ npm --prefix extension run build
 bash -n scripts/build/build.sh
 bash -n engine/build.sh
 bash -n engine/brand.sh
+bash -n engine/package.sh
 bash -n engine/build-deb.sh
 bash -n engine/build-rpm.sh
 bash -n engine/build-appimage.sh
 bash -n engine/build-exe.sh
+bash -n engine/sign.sh
+bash -n engine/checksums.sh
+bash -n installer/build.sh
 ```
 
 ### Run the Extension in Dev Mode
@@ -85,15 +89,22 @@ npm run preview  # Preview dist/ locally
 
 ### Build a Package Locally
 
-```bash
-VERSION=2.1.7 bash engine/build-deb.sh     # .deb
-VERSION=2.1.7 bash engine/build-rpm.sh     # .rpm
-VERSION=2.1.7 bash engine/build-appimage.sh # .AppImage
+The engine is compiled from the Ladybird source tree. First build the engine, then package it:
 
-# Orchestrator shorthand
+```bash
+# 1. Build the engine (clones Ladybird, applies branding, compiles)
+bash engine/build.sh
+
+# 2. Build packages from the built tree (build/ladybird)
+bash engine/build-deb.sh build/ladybird build 2.1.7        # .deb
+bash engine/build-rpm.sh build/ladybird build 2.1.7        # .rpm
+bash engine/build-appimage.sh build/ladybird build 2.1.7   # .AppImage
+bash engine/build-exe.sh build/ladybird build 2.1.7        # Windows zip
+
+# Or use the orchestrator shorthand
 bash scripts/build/build.sh linux
 bash scripts/build/build.sh macos      # must run on macOS
-bash scripts/build/build.sh windows    # must run on Windows / powershell
+bash scripts/build/build.sh windows    # prints WSL2 instructions
 ```
 
 Artifacts land in `build/`. See [`packages/linux/README.md`](packages/linux/README.md) and platform READMEs for details.
@@ -103,14 +114,14 @@ Artifacts land in `build/`. See [`packages/linux/README.md`](packages/linux/READ
 ## Project Structure
 
 ```
-VERSION                                           # single source of truth
+VERSION                                           # single source of truth (2.1.7)
 assets/icons/aurora.png                           # canonical icon
-engine/                 Build scripts: build.sh, brand.sh, packaging scripts
+engine/                 Build scripts: build.sh, brand.sh, package.sh, packaging scripts, newtab/
 extension/              React new-tab (Vite). Manifest V3, newtab override.
 installer/              Native Qt C++ installer
 packages/linux/         Platform READMEs (debian, redhat, arch, appimage)
-packages/macos/         macOS packaging
-packages/windows/       Windows packaging
+packages/macos/         macOS README
+packages/windows/       Windows README
 scripts/build/          Build orchestrator (build.sh)
 scripts/checks/         Smoke tests, YAML validation
 ```
@@ -119,8 +130,9 @@ scripts/checks/         Smoke tests, YAML validation
 
 - `extension/manifest.json` — MV3 new-tab override → `dist/index.html`
 - `extension/vite.config.js` — `base: './'`, deterministic asset names
-- `engine/build.sh` — Main build script (clone, brand, compile)
-- `engine/build-deb.sh`, `engine/build-rpm.sh`, `engine/build-appimage.sh` — Package builders
+- `engine/build.sh` — Main build script (clone, brand, compile, package)
+- `engine/build-deb.sh`, `engine/build-rpm.sh`, `engine/build-appimage.sh`, `engine/build-exe.sh` — Package builders (take `<ladybird-build-dir> <output-dir> <version>`)
+- `engine/newtab/index.html` — Static new-tab page bundled by the installer
 
 ---
 
@@ -167,9 +179,9 @@ We follow **Conventional Commits**:
 
 ```
 feat(extension): add keyboard shortcut palette
-fix(linux): handle missing chrome-linux asset without aborting
+fix(linux): handle missing ladybird binary without aborting
 docs(readme): add AppImage troubleshooting
-chore(deps): bump vite to 6.0.1
+chore(deps): bump vite to 8.3.0
 ```
 
 - Use imperative mood (“add” not “added”).
@@ -182,12 +194,12 @@ chore(deps): bump vite to 6.0.1
 
 Before opening a PR:
 
-- [ ] Search existing [issues](https://github.com/Draftiermovie66/Aurora-Browser/issues) and [PRs](https://github.com/Draftiermovie66/Aurora-Browser/pulls) to avoid duplication.
+- [ ] Search existing [issues](https://github.com/The-Aurora-Browser/Aurora-Browser/issues) and [PRs](https://github.com/The-Aurora-Browser/Aurora-Browser/pulls) to avoid duplication.
 - [ ] Create an issue for large changes and discuss the approach first.
 - [ ] Run local checks:
   ```bash
   npm --prefix extension install && npm --prefix extension run build
-  for f in scripts/build/build.sh engine/build.sh engine/brand.sh engine/build-deb.sh engine/build-rpm.sh engine/build-appimage.sh engine/build-exe.sh installer/build.sh; do bash -n "$f" && echo "OK $f"; done
+  for f in scripts/build/build.sh engine/*.sh installer/build.sh; do bash -n "$f" && echo "OK $f"; done
   ```
 - [ ] Test the package you touched (install the artifact you built if possible).
 - [ ] Update docs (`README.md`, `packages/linux/README.md`, etc.) if behavior or install steps changed.
@@ -198,7 +210,7 @@ When you open the PR:
 2. Link related issues (`Closes #123`).
 3. Add screenshots/recordings for UI changes (`extension/`).
 4. Mark as **Draft** if not ready for review.
-5. CI must pass (`build-extension` + `lint-shell-scripts`). Fix failures before requesting review.
+5. CI must pass (`lint-scripts`, `validate-version`, `validate-workflows`, `build-engine-check`). Fix failures before requesting review.
 6. At least one maintainer review is required.
 
 After merge, delete your branch.
@@ -219,11 +231,11 @@ Full details: [STYLEGUIDE.md](STYLEGUIDE.md)
 **TL;DR:**
 
 - **Shell** — `set -euo pipefail`, `bash -n` clean, quote variables
-- **JavaScript/React** — Vite + React 18, Framer Motion for animations, keep components small
-- **C# (Windows)** — follow existing `windows/src/AuroraBrowser.cs` style
+- **JavaScript/React** — Vite + React 19, Framer Motion for animations, keep components small
+- **C++ (installer)** — follow existing `installer/src/*` style
 - **Markdown** — wrap lines sensibly, use fenced code blocks with language tags
 
-Run `npx --prefix extension vite build` and `bash -n` before pushing.
+Run `npm --prefix extension run build` and `bash -n` before pushing.
 
 ---
 
@@ -237,7 +249,7 @@ There is no full automated test suite yet — contributions adding tests are esp
 - [ ] New Tab renders correctly (if `extension/` changed) — test via `npm run preview` or installed browser
 - [ ] Shell scripts pass `bash -n` and `shellcheck` (if available)
 - [ ] Built package installs and launches (test at least one Linux target you modified)
-- [ ] No regressions in profile isolation (`--user-data-dir` still self-contained)
+- [ ] Installer builds and runs (`bash installer/build.sh`)
 
 If you add automated checks, document how to run them in the PR description and in `STYLEGUIDE.md`.
 
@@ -261,7 +273,7 @@ See `.github/workflows/release.yml` and `release-drafter.yml` for automation.
 
 ## Getting Help
 
-- **Questions / discussion:** Open a [GitHub Discussion](https://github.com/Draftiermovie66/Aurora-Browser/discussions) or comment on a relevant issue.
+- **Questions / discussion:** Open a [GitHub Discussion](https://github.com/The-Aurora-Browser/Aurora-Browser/discussions) or comment on a relevant issue.
 - **Bugs:** Use the *Bug report* template with platform/version/repro.
 - **Security:** See [SECURITY.md](SECURITY.md) — do not open public issues for vulnerabilities.
 

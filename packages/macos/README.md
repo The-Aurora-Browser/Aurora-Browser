@@ -7,63 +7,52 @@
 
 - macOS 11.0 (Big Sur) or later
 - Apple Silicon (M1/M2/M3) or Intel Mac
-- Chromium engine downloaded automatically on first run
+- The LibWeb (Ladybird) engine is compiled into the app — no download on first run
 
 ## Install
 
 The BETA is distributed as a `.dmg`:
 
-1. Download `Aurora-Browser-{version}-BETA.dmg` from Releases
+1. Download `Aurora-Browser-{version}-macOS.dmg` from Releases
 2. Open the DMG and drag **Aurora Browser** into Applications
 3. First launch: right-click the app → **Open** (macOS Gatekeeper will warn
    about the unsigned BETA build)
-4. The engine is downloaded automatically via `update.sh`
-
-## Auto-update
-
-The browser checks for updates once per day. To force an update:
-
-```bash
-/Applications/Aurora\ Browser.app/Contents/Resources/update.sh
-```
 
 ## Build from source
 
 Builds must run on macOS (for `.dmg` creation):
 
 ```bash
-VERSION=2.0.1 bash macos/build.sh
+bash engine/build.sh
 ```
 
-Outputs:
-- `build/macos/Aurora Browser.app` — the app bundle
-- `build/Aurora-Browser-{version}-BETA.dmg` — the installer (requires hdiutil)
+This clones Ladybird, applies Aurora branding, compiles the engine, and
+produces `build/aurora-browser-{version}-macos/Aurora Browser.app`.
+
+To create a `.dmg`, use the release workflow (GitHub Actions) or run:
+
+```bash
+hdiutil create -volname "Aurora Browser" \
+  -srcfolder "build/aurora-browser-2.1.7-macos/Aurora Browser.app" \
+  -ov -format UDZO "build/Aurora-Browser-2.1.7-macOS.dmg"
+```
 
 ## Structure
 
-```
-macos/
-├── build.sh      # Creates the .app bundle and .dmg
-└── update.sh     # Downloads/updates the macOS engine
-```
-
 Inside the app bundle:
+
 ```
 Aurora Browser.app/
   Contents/
-    Info.plist
-    MacOS/launch-aurora      # launcher
-    Resources/
-      extension/             # new tab page (React)
-      profile/               # user data (cookies, history)
-      chrome-mac/            # engine (downloaded)
-      update.sh              # updater
-      update.conf
-      version.txt
+    Info.plist            # patched to "Aurora Browser" / com.aurora.browser
+    MacOS/ladybird        # engine binary
+    Resources/            # engine resources
 ```
 
 ## Notes
 
-- The engine is Chrome-for-Testing for macOS (arm64/universal2).
-- No code signing or notarization yet — expected for a BETA.
-- The custom new-tab React page is fully supported.
+- The engine is LibWeb (Ladybird), compiled from source — not Chromium.
+- The release workflow ad-hoc signs the app (`codesign --force --deep --sign -`);
+  it is not notarized yet — expected for a BETA.
+- The static new-tab page (`engine/newtab/index.html`) is bundled by the
+  native installer (`installer/build.sh`).

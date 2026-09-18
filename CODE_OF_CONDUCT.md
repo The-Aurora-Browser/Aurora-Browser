@@ -39,7 +39,7 @@ This Code of Conduct applies within all community spaces, and also applies when 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be reported to the community leaders responsible for enforcement at:
 
 - **Email:** Use the contact listed in [SECURITY.md](SECURITY.md) or open a private security advisory via GitHub
-- **GitHub:** `@Draftiermovie66` / maintainers of [`Draftiermovie66/Aurora-Browser`](https://github.com/Draftiermovie66/Aurora-Browser)
+- **GitHub:** Maintainers of [`The-Aurora-Browser/Aurora-Browser`](https://github.com/The-Aurora-Browser/Aurora-Browser)
 
 All complaints will be reviewed and investigated promptly and fairly.
 

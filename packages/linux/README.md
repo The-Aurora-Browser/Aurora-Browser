@@ -10,7 +10,6 @@ Aurora Browser is packaged for major Linux distro families. Choose the package t
 | `debian/`             | Ubuntu, Debian, Linux Mint, Pop!_OS, elementaryOS        | `.deb`         |
 | `redhat/`             | Fedora, RHEL, CentOS, Rocky, AlmaLinux                   | `.rpm`         |
 | `arch/`               | Arch, Manjaro, EndeavourOS, Garuda                       | `PKGBUILD`     |
-| `common/`             | Shared scripts (historical)                              | —              |
 
 ## Which should I use?
 
@@ -21,17 +20,19 @@ Aurora Browser is packaged for major Linux distro families. Choose the package t
 
 ## Building
 
-All builds produce artifacts into the root `build/` directory. The React new tab
-extension is built automatically if `extension/node_modules` exists.
+All builds produce artifacts into the root `build/` directory. The engine is
+compiled from the Ladybird source tree first, then packaged.
 
 **Debian (.deb):**
 ```bash
-VERSION=2.0.1 bash engine/build-deb.sh
+bash engine/build.sh
+bash engine/build-deb.sh build/ladybird build 2.1.7
 ```
 
 **RedHat / Fedora (.rpm):**
 ```bash
-VERSION=2.0.1 bash engine/build-rpm.sh
+bash engine/build.sh
+bash engine/build-rpm.sh build/ladybird build 2.1.7
 ```
 
 **Arch (PKGBUILD):**
@@ -41,24 +42,22 @@ cd packages/linux/arch && makepkg -si
 
 **AppImage (universal):**
 ```bash
-VERSION=2.0.1 bash engine/build-appimage.sh
+bash engine/build.sh
+bash engine/build-appimage.sh build/ladybird build 2.1.7
 ```
 
 ## Engine scripts (`engine/`)
 
 The `engine/` directory holds the main build and packaging scripts:
 
-- `build.sh` — clones Ladybird, applies branding, compiles
+- `build.sh` — clones Ladybird, applies branding, compiles, packages
 - `brand.sh` — applies Aurora Browser branding to Ladybird source
+- `package.sh` — creates a distributable directory from a built tree
 - `build-deb.sh` — builds `.deb` packages
 - `build-rpm.sh` — builds `.rpm` packages
 - `build-appimage.sh` — builds `.AppImage`
 - `build-exe.sh` — builds Windows packages
 
-## Engine download
+## Engine
 
-Aurora Browser uses the Ladybird LibWeb engine which is compiled from source during the build process. The engine binary is included in the package.
-
-## Auto-updates
-
-Aurora Browser checks for updates via the update mechanism in the engine build scripts.
+Aurora Browser uses the Ladybird LibWeb engine which is compiled from source during the build process. The engine binary is included in the package — no download is needed on first launch.

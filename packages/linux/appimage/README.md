@@ -6,8 +6,8 @@ without installing dependencies.
 ## Run
 
 ```bash
-chmod +x Aurora-Browser-2.0.1-x86_64.AppImage
-./Aurora-Browser-2.0.1-x86_64.AppImage
+chmod +x Aurora-Browser-2.1.7-x86_64.AppImage
+./Aurora-Browser-2.1.7-x86_64.AppImage
 ```
 
 On some distros you may need to enable FUSE:
@@ -17,34 +17,20 @@ sudo apt install libfuse2   # Debian/Ubuntu
 sudo dnf install fuse       # Fedora
 ```
 
-## Auto-install
-
-The first time you run the AppImage it auto-installs itself into your desktop
-session: a menu entry (`.desktop` file) and an icon are created under
-`~/.local/share`. If you later move or rename the AppImage, the entry is
-updated automatically on the next launch.
-
-CLI switches:
-
-```bash
-./Aurora-Browser-2.0.1-x86_64.AppImage --aurora-help            # show options
-./Aurora-Browser-2.0.1-x86_64.AppImage --aurora-no-integrate    # run w/o registering
-./Aurora-Browser-2.0.1-x86_64.AppImage --aurora-uninstall       # remove menu entry + icon
-```
-
 ## Build from source
 
 ```bash
-VERSION=2.0.1 bash engine/build-appimage.sh
+bash engine/build.sh
+bash engine/build-appimage.sh build/ladybird build 2.1.7
 ```
 
 The script downloads `linuxdeploy` automatically on first run and produces:
 
 ```
-build/Aurora-Browser-2.0.1-x86_64.AppImage
+build/Aurora-Browser-2.1.7-x86_64.AppImage
 ```
 
 ## Notes
 
-- The engine is downloaded on first run into the profile directory.
-- Store the `.AppImage` anywhere; it carries its own launcher and updater.
+- The engine is compiled into the AppImage — no download is needed on first run.
+- Store the `.AppImage` anywhere; it is fully self-contained.

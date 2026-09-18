@@ -3,18 +3,19 @@
 ## Install
 
 ```bash
-sudo dpkg -i aurora-browser_2.0.1_amd64.deb
+sudo dpkg -i aurora-browser_2.1.7_amd64.deb
 sudo apt-get install -f
 ```
 
-The browser engine is downloaded automatically on first launch.
+The engine is compiled into the package — no download is needed on first launch.
 
 ## Build from source
 
 ```bash
-sudo apt install dpkg-dev fakeroot nodejs npm
-VERSION=2.0.1 bash engine/build-deb.sh
-sudo dpkg -i aurora-browser_*.deb
+sudo apt install dpkg-dev fakeroot
+bash engine/build.sh
+bash engine/build-deb.sh build/ladybird build 2.1.7
+sudo dpkg -i build/aurora-browser_2.1.7_amd64.deb
 ```
 
 ## Build the extension (React)
@@ -34,10 +35,10 @@ The built extension output goes to `extension/dist/`.
 - Ubuntu 24.04 LTS+
 - Any Debian-based distro (Debian 11+, Linux Mint, Pop!_OS, etc.)
 
-## Auto-updates
+## Updating
 
-The browser checks for updates once per day. To force:
+Download the latest `.deb` from [GitHub Releases](https://github.com/The-Aurora-Browser/Aurora-Browser/releases) and reinstall:
 
 ```bash
-sudo /opt/aurora-browser/update.sh
+sudo dpkg -i aurora-browser_<version>_amd64.deb
 ```

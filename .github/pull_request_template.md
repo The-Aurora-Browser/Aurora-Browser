@@ -37,7 +37,8 @@ Closes #
 # Example:
 npm --prefix extension install
 npm --prefix extension run build
-VERSION=2.1.3 bash engine/build-deb.sh
+bash engine/build.sh
+bash engine/build-deb.sh build/ladybird build 2.1.7
 # then install & launch artifact from build/
 ```
 
@@ -60,11 +61,11 @@ VERSION=2.1.3 bash engine/build-deb.sh
 - [ ] I follow [Conventional Commits](https://www.conventionalcommits.org/) (`feat(scope): ...`)
 - [ ] I created a **focused branch** from `main` (`feat/…`, `fix/…`, etc.) and will delete it after merge
 - [ ] I linked the related issue (`Closes #…`) and checked for duplicates
-- [ ] I updated docs (`README.md`, `linux/README.md`, `macos/README.md`, `windows/README.md`) if install/build behavior changed
+- [ ] I updated docs (`README.md`, `packages/linux/README.md`, `packages/macos/README.md`, `packages/windows/README.md`) if install/build behavior changed
 - [ ] `npm --prefix extension run build` passes (if `extension/` changed)
 - [ ] All `*.sh` changed pass `bash -n` (CI runs `lint-shell-scripts`)
 - [ ] I tested the package/target I changed (installed artifact or `npm run preview`)
-- [ ] `update.sh` / `update.ps1` still safe to re-run / fallback behavior preserved (if updater changed)
+- [ ] Build and packaging scripts still safe to re-run / fallback behavior preserved (if build scripts changed)
 - [ ] No secrets, credentials, or absolute local paths committed
 - [ ] No new `manifest.json` permissions without justification in description (+ SECURITY.md if needed)
 
