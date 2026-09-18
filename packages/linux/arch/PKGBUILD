@@ -1,0 +1,91 @@
+# Maintainer: Aurora Browser <draftiermovie66@users.noreply.github.com>
+# Contributor: The-Aurora-Browser <https://github.com/The-Aurora-Browser>
+pkgname=aurora-browser
+pkgver=2.1.7
+pkgrel=1
+pkgdesc='Custom open-source browser built on the Ladybird LibWeb engine'
+arch=('x86_64')
+url='https://github.com/The-Aurora-Browser/Aurora-Browser'
+license=('MIT')
+depends=('qt6-base' 'libgl' 'glu' 'libpulse' 'openssl' 'hicolor-icon-theme' 'desktop-file-utils')
+makedepends=('clang' 'lld' 'cmake' 'ninja' 'git' 'pkg-config' 'autoconf' 'autoconf-archive' 'automake' 'nasm' 'qt6-base' 'qt6-tools' 'qt6-wayland' 'rust' 'python' 'curl' 'ccache')
+optdepends=(
+  'nodejs: rebuild the React new-tab extension from source'
+  'npm: rebuild the React new-tab extension from source'
+)
+provides=('aurora-browser')
+conflicts=('aurora-browser-git')
+install=aurora-browser.install
+source=()
+sha256sums=()
+
+# No remote source for local builds — package() stages directly from the
+# repository tree. For AUR publishing, add:
+#   source=("aurora-browser-${pkgver}.tar.gz::https://github.com/The-Aurora-Browser/Aurora-Browser/archive/refs/tags/v${pkgver}.tar.gz")
+# and adjust package() to use "${srcdir}/Aurora-Browser-${pkgver}".
+
+pkgver() {
+  # Keep pkgver in sync with top-level VERSION when building from git
+  if [ -f "${startdir}/../../VERSION" ]; then
+    cat "${startdir}/../../VERSION"
+  elif [ -f "${startdir}/VERSION" ]; then
+    cat "${startdir}/VERSION"
+  else
+    echo "${pkgver}"
+  fi
+}
+
+build() {
+  # Build the Ladybird engine with Aurora branding (clone + brand + compile + package).
+  # This takes 30-120 minutes and requires the full toolchain listed in makedepends.
+  VERSION="${pkgver}" bash "${startdir}/../../engine/build.sh"
+}
+
+package() {
+  local root="${startdir}/../.."
+  local staged="${root}/build/aurora-browser-${pkgver}"
+
+  if [ ! -d "${staged}" ]; then
+    error "Engine build output not found: ${staged}"
+    error "Run 'makepkg' from packages/linux/arch (build() runs engine/build.sh)."
+    return 1
+  fi
+
+  # --- /opt/aurora-browser ---
+  install -dm755 "${pkgdir}/opt/aurora-browser"
+  cp -R "${staged}/." "${pkgdir}/opt/aurora-browser/"
+
+  # --- /usr/bin wrapper ---
+  install -dm755 "${pkgdir}/usr/bin"
+  cat > "${pkgdir}/usr/bin/aurora-browser" <<'WRAPPER'
+#!/bin/bash
+exec /opt/aurora-browser/aurora-browser "$@"
+WRAPPER
+  chmod 755 "${pkgdir}/usr/bin/aurora-browser"
+
+  # --- .desktop ---
+  install -dm755 "${pkgdir}/usr/share/applications"
+  cat > "${pkgdir}/usr/share/applications/aurora-browser.desktop" <<'DESKTOP'
+[Desktop Entry]
+Name=Aurora Browser
+Comment=Custom open-source browser with LibWeb engine
+Exec=/usr/bin/aurora-browser %U
+Icon=aurora-browser
+Terminal=false
+Type=Application
+Categories=Network;WebBrowser;
+MimeType=text/html;x-scheme-handler/http;x-scheme-handler/https;
+DESKTOP
+
+  # --- icons ---
+  local icon="${root}/assets/icons/aurora.png"
+  [ -f "${icon}" ] || icon="${root}/aurora.png"
+  if [ -f "${icon}" ]; then
+    install -dm755 "${pkgdir}/usr/share/icons/hicolor/48x48/apps"
+    install -dm755 "${pkgdir}/usr/share/icons/hicolor/256x256/apps"
+    install -Dm644 "${icon}" "${pkgdir}/usr/share/icons/hicolor/48x48/apps/aurora-browser.png"
+    install -Dm644 "${icon}" "${pkgdir}/usr/share/icons/hicolor/256x256/apps/aurora-browser.png"
+    install -dm755 "${pkgdir}/usr/share/pixmaps"
+    ln -s /usr/share/icons/hicolor/48x48/apps/aurora-browser.png "${pkgdir}/usr/share/pixmaps/aurora-browser.png"
+  fi
+}

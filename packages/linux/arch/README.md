@@ -8,12 +8,19 @@ yay -S aurora-browser
 
 ## Build locally
 
+The PKGBUILD builds the Ladybird engine from source (clone + brand + compile),
+which takes **30-120 minutes** and requires the toolchain in `makedepends`
+(Clang, CMake, Ninja, Qt6, Rust, nasm).
+
 ```bash
 cd packages/linux/arch
 makepkg -si
 ```
 
-## Build from source
+## Build from source (pre-built engine)
+
+If you already built the engine with `engine/build.sh`, the PKGBUILD reuses
+`build/aurora-browser-${pkgver}` and only packages it:
 
 ```bash
 # First build the engine
