@@ -6,6 +6,37 @@
     <a href="https://github.com/The-Aurora-Browser/Aurora-Browser/actions/workflows/release.yml">
         <img src="https://shieldcn.dev/badge/Build-Passing-success.svg?logo=githubactions" alt="Build">
     </a>
+    <a href="https://github.com/The-Aurora-Browser/Aurora-Browser/releases">
+        <img src="https://shieldcn.dev/badge/Version-2.1.7-blue.svg" alt="Version">
+    </a>
+    <a href="https://github.com/The-Aurora-Browser/Aurora-Browser/blob/main/LICENSE">
+        <img src="https://shieldcn.dev/badge/License-MIT-green.svg" alt="License">
+    </a>
+    <a href="https://github.com/LadybirdBrowser/ladybird">
+        <img src="https://shieldcn.dev/badge/Engine-LibWeb%20%28Ladybird%29-purple.svg" alt="Engine">
+    </a>
+    <a href="https://github.com/The-Aurora-Browser/Aurora-Browser/stargazers">
+        <img src="https://shieldcn.dev/github/stars/The-Aurora-Browser/Aurora-Browser.svg" alt="Stars">
+    </a>
+    <a href="https://github.com/The-Aurora-Browser/Aurora-Browser/forks">
+        <img src="https://shieldcn.dev/github/forks/The-Aurora-Browser/Aurora-Browser.svg" alt="Forks">
+    </a>
+    <a href="https://github.com/The-Aurora-Browser/Aurora-Browser/issues">
+        <img src="https://shieldcn.dev/github/issues/The-Aurora-Browser/Aurora-Browser.svg" alt="Issues">
+    </a>
+    <a href="https://github.com/The-Aurora-Browser/Aurora-Browser/pulls">
+        <img src="https://shieldcn.dev/github/prs/The-Aurora-Browser/Aurora-Browser.svg" alt="Pull Requests">
+    </a>
+    <a href="https://github.com/The-Aurora-Browser/Aurora-Browser/releases">
+        <img src="https://shieldcn.dev/github/release/The-Aurora-Browser/Aurora-Browser.svg" alt="Release">
+    </a>
+</p>
+
+<p align="center">
+    <img src="https://shieldcn.dev/badge/Linux-supported-blue.svg?logo=linux" alt="Linux">
+    <img src="https://shieldcn.dev/badge/macOS-BETA-lightgrey.svg?logo=apple" alt="macOS">
+    <img src="https://shieldcn.dev/badge/Windows-BETA-lightgrey.svg?logo=windows" alt="Windows">
+    <img src="https://shieldcn.dev/badge/PRs-Welcome-brightgreen.svg" alt="PRs Welcome">
 </p>
 
 ---
